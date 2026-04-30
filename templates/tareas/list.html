@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Tareas{% endblock %}
+{% block content %}
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-semibold">Tareas</h1>
+      <div class="text-sm text-slate-600">Pendientes por vencimiento</div>
+    </div>
+  </div>
+
+  <div class="mt-6 space-y-2">
+    {% if tareas|length == 0 %}
+      <div class="p-6 rounded border bg-white text-slate-600">No hay tareas pendientes.</div>
+    {% else %}
+      {% for t in tareas %}
+        <div class="border rounded bg-white p-3 flex items-center justify-between">
+          <div>
+            <div class="font-semibold">{{ t.tipo.value if t.tipo else '' }}</div>
+            <div class="text-xs text-slate-500">Vence: {{ t.fecha_vencimiento }} · Prioridad: {{ t.prioridad.value if t.prioridad else '' }}</div>
+            {% if t.descripcion %}<div class="text-sm text-slate-700 mt-1">{{ t.descripcion }}</div>{% endif %}
+          </div>
+          <form method="post" action="/tareas/{{ t.id }}/toggle" class="text-sm">
+            <button class="px-3 py-2 rounded {{ 'bg-slate-200' if t.completada else 'bg-primary text-white' }}">{{ 'Reabrir' if t.completada else 'Completar' }}</button>
+          </form>
+        </div>
+      {% endfor %}
+    {% endif %}
+  </div>
+{% endblock %}

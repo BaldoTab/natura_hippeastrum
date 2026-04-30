@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Editar' if cruce else 'Nuevo' }} cruce{% endblock %}
+{% block content %}
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-semibold">{{ 'Editar' if cruce else 'Nuevo' }} cruce</h1>
+      {% if cruce %}<div class="text-sm text-slate-600 mono">{{ cruce.codigo }}</div>{% endif %}
+    </div>
+    <a class="px-3 py-2 border rounded bg-white" href="{% if cruce %}/cruces/{{ cruce.id }}{% else %}/cruces{% endif %}">Cancelar</a>
+  </div>
+
+  <form class="mt-6 space-y-6" method="post" action="{{ action }}">
+    <section class="p-4 rounded border bg-white">
+      <div class="font-semibold">Parentales</div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-3">
+        <select name="planta_madre_id" class="border rounded px-3 py-2" required>
+          {% for p in plantas %}
+            <option value="{{ p.id }}" {% if form.planta_madre_id == p.id %}selected{% endif %}>{{ p.codigo }} · {{ p.nombre_cultivar or '—' }}</option>
+          {% endfor %}
+        </select>
+        <select name="planta_padre_id" class="border rounded px-3 py-2" required>
+          {% for p in plantas %}
+            <option value="{{ p.id }}" {% if form.planta_padre_id == p.id %}selected{% endif %}>{{ p.codigo }} · {{ p.nombre_cultivar or '—' }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-3">
+        <input name="fecha_polinizacion" value="{{ form.fecha_polinizacion or '' }}" class="border rounded px-3 py-2" placeholder="Polinización (YYYY-MM-DD)" required />
+        <input name="num_flores_polinizadas" value="{{ form.num_flores_polinizadas or '' }}" class="border rounded px-3 py-2" placeholder="Nº flores" />
+        <select name="fecundacion_confirmada" class="border rounded px-3 py-2">
+          {% for f in fecundacion_opts %}
+            <option value="{{ f }}" {% if form.fecundacion_confirmada == f %}selected{% endif %}>{{ f }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-3">
+        <input name="fecha_confirmacion" value="{{ form.fecha_confirmacion or '' }}" class="border rounded px-3 py-2" placeholder="Confirmación (opcional)" />
+        <input name="fecha_siembra" value="{{ form.fecha_siembra or '' }}" class="border rounded px-3 py-2" placeholder="Siembra (opcional)" />
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-3">
+        <input name="num_capsulas" value="{{ form.num_capsulas or 0 }}" class="border rounded px-3 py-2" placeholder="Nº cápsulas" />
+        <input name="num_semillas_sembradas" value="{{ form.num_semillas_sembradas or 0 }}" class="border rounded px-3 py-2" placeholder="Semillas sembradas" />
+        <input name="num_germinadas" value="{{ form.num_germinadas or 0 }}" class="border rounded px-3 py-2" placeholder="Germinadas" />
+      </div>
+
+      <div class="mt-3">
+        <textarea name="notas" rows="4" class="border rounded px-3 py-2 w-full" placeholder="Notas">{{ form.notas or '' }}</textarea>
+      </div>
+    </section>
+
+    <div class="flex items-center justify-end gap-2">
+      <button class="px-4 py-2 rounded bg-primary text-white">Guardar</button>
+    </div>
+  </form>
+{% endblock %}

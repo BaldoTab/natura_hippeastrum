@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}Hippeastrum{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            bg: '#FAFAF8',
+            primary: '#2D5016',
+            secondary: '#8B4513',
+            accent: '#F5C842',
+            genF0: '#FFF2CC',
+            genF1: '#DDEBF7',
+            genF2: '#E2EFDA',
+            genF3: '#FCE4D6',
+          }
+        }
+      }
+    }
+  </script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    html { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; }
+  </style>
+</head>
+<body class="bg-bg text-slate-900">
+  <div x-data="{ open: false }" class="min-h-screen">
+    <div class="lg:hidden sticky top-0 bg-bg/95 backdrop-blur border-b border-slate-200 z-40">
+      <div class="flex items-center justify-between p-3">
+        <div class="font-semibold text-primary">Hippeastrum</div>
+        <button @click="open = !open" class="px-3 py-2 border rounded text-sm">Menú</button>
+      </div>
+    </div>
+
+    <div class="flex">
+      <aside :class="open ? 'block' : 'hidden'" class="lg:block w-full lg:w-64 border-r border-slate-200 bg-white lg:min-h-screen">
+        <div class="p-4 hidden lg:block">
+          <div class="font-semibold text-primary text-lg">Hippeastrum</div>
+          <div class="text-xs text-slate-500">Gestión de hibridación</div>
+        </div>
+        <nav class="p-2">
+          <a class="block px-3 py-2 rounded hover:bg-slate-50" href="/">Dashboard</a>
+          <a class="block px-3 py-2 rounded hover:bg-slate-50" href="/plantas">Plantas</a>
+          <a class="block px-3 py-2 rounded hover:bg-slate-50" href="/cruces">Cruces</a>
+          <a class="block px-3 py-2 rounded hover:bg-slate-50" href="/tareas">Tareas</a>
+          <a class="block px-3 py-2 rounded hover:bg-slate-50" href="/galeria">Galería</a>
+          <a class="block px-3 py-2 rounded hover:bg-slate-50" href="/arbol">Árbol</a>
+          <a class="block px-3 py-2 rounded hover:bg-slate-50" href="/predictor">Predictor</a>
+          <a class="block px-3 py-2 rounded hover:bg-slate-50" href="/referencia">Referencia</a>
+        </nav>
+      </aside>
+
+      <main class="flex-1">
+        <div class="max-w-6xl mx-auto p-4 lg:p-8">
+          {% if breadcrumbs %}
+            <div class="text-xs text-slate-500 mb-3">{{ breadcrumbs|safe }}</div>
+          {% endif %}
+
+          {% if toast %}
+            <div class="mb-4 p-3 rounded border bg-white">{{ toast }}</div>
+          {% endif %}
+
+          {% block content %}{% endblock %}
+        </div>
+      </main>
+    </div>
+  </div>
+</body>
+</html>

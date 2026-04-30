@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Galería{% endblock %}
+{% block content %}
+  <h1 class="text-2xl font-semibold">Galería</h1>
+  <div class="text-sm text-slate-600">Vista global (básica)</div>
+
+  {% if fotos|length == 0 %}
+    <div class="mt-6 p-6 rounded border bg-white text-slate-600">Sin fotos todavía.</div>
+  {% else %}
+    <div class="grid grid-cols-3 lg:grid-cols-6 gap-2 mt-6">
+      {% for f in fotos %}
+        <a href="/static/photos/{{ f.filename }}" class="border rounded bg-white p-1">
+          {% if f.thumbnail_filename %}
+            <img src="/static/thumbnails/{{ f.thumbnail_filename }}" class="w-full h-24 object-cover rounded" />
+          {% else %}
+            <img src="/static/photos/{{ f.filename }}" class="w-full h-24 object-cover rounded" />
+          {% endif %}
+          <div class="text-[11px] text-slate-600 mt-1">{{ f.etapa }}</div>
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endblock %}

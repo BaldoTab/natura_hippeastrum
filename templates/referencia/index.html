@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Referencia genética{% endblock %}
+{% block content %}
+  <h1 class="text-2xl font-semibold">Referencia genética</h1>
+  <div class="text-sm text-slate-600">Genes de referencia (seed)</div>
+
+  {% if genes|length == 0 %}
+    <div class="mt-6 p-6 rounded border bg-white text-slate-600">Sin datos.</div>
+  {% else %}
+    <div class="mt-6 overflow-x-auto border rounded bg-white">
+      <table class="min-w-full text-sm">
+        <thead class="bg-slate-50">
+          <tr>
+            <th class="text-left p-2">Gen</th>
+            <th class="text-left p-2">Carácter</th>
+            <th class="text-left p-2">Dominante</th>
+            <th class="text-left p-2">Recesivo</th>
+            <th class="text-left p-2">Evidencia</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for g in genes %}
+            <tr class="border-t">
+              <td class="p-2 mono font-semibold">{{ g.gen }}</td>
+              <td class="p-2">{{ g.caracter_controlado or '—' }}</td>
+              <td class="p-2">{{ g.alelo_dominante or '—' }}</td>
+              <td class="p-2">{{ g.alelo_recesivo or '—' }}</td>
+              <td class="p-2">{{ g.nivel_evidencia or '—' }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+{% endblock %}

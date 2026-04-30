@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Plantas{% endblock %}
+{% block content %}
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-semibold">Plantas</h1>
+      <div class="text-sm text-slate-600">Listado y filtros</div>
+    </div>
+    <a class="px-3 py-2 rounded bg-primary text-white" href="/plantas/new">+ Nueva</a>
+  </div>
+
+  <form class="mt-4 grid grid-cols-2 lg:grid-cols-5 gap-2" method="get" action="/plantas">
+    <input name="q" value="{{ q or '' }}" class="col-span-2 lg:col-span-2 border rounded px-3 py-2" placeholder="Buscar (HP-xxx / nombre)" />
+    <select name="generacion" class="border rounded px-3 py-2">
+      <option value="">Generación</option>
+      {% for g in generaciones %}
+        <option value="{{ g }}" {% if generacion == g %}selected{% endif %}>{{ g }}</option>
+      {% endfor %}
+    </select>
+    <select name="estado" class="border rounded px-3 py-2">
+      <option value="">Estado</option>
+      {% for e in estados %}
+        <option value="{{ e }}" {% if estado == e %}selected{% endif %}>{{ e }}</option>
+      {% endfor %}
+    </select>
+    <select name="ploidy" class="border rounded px-3 py-2">
+      <option value="">Ploidía</option>
+      {% for p in ploidies %}
+        <option value="{{ p }}" {% if ploidy == p %}selected{% endif %}>{{ p }}</option>
+      {% endfor %}
+    </select>
+    <button class="border rounded px-3 py-2 bg-white">Filtrar</button>
+  </form>
+
+  {% if plantas|length == 0 %}
+    <div class="mt-6 p-6 rounded border bg-white text-slate-600">No hay plantas con esos filtros.</div>
+  {% else %}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-6">
+      {% for p in plantas %}
+        <a href="/plantas/{{ p.id }}" class="block border rounded bg-white p-3 hover:bg-slate-50">
+          <div class="flex items-center justify-between">
+            <div class="mono font-semibold">{{ p.codigo }}</div>
+            <div class="text-xs px-2 py-0.5 rounded border">{{ p.generacion.value if p.generacion else '' }}</div>
+          </div>
+          <div class="text-xs text-slate-600 mt-1">{{ p.nombre_cultivar or '—' }}</div>
+          <div class="text-xs text-slate-500">Estado: {{ p.estado.value if p.estado else '' }} · Ploidía: {{ p.ploidy_sospecha.value if p.ploidy_sospecha else '' }}</div>
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endblock %}

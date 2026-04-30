@@ -1,0 +1,9 @@
+Alembic migrations live here.
+
+To create a migration (from hippeastrum_app/):
+
+  alembic -c alembic.ini revision --autogenerate -m "msg"
+
+To apply:
+
+  alembic -c alembic.ini upgrade head

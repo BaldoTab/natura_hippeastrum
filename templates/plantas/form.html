@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Editar' if planta else 'Nueva' }} planta{% endblock %}
+{% block content %}
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <h1 class="text-2xl font-semibold">{{ 'Editar' if planta else 'Nueva' }} planta</h1>
+      {% if planta %}<div class="text-sm text-slate-600 mono">{{ planta.codigo }}</div>{% endif %}
+    </div>
+    <a class="px-3 py-2 border rounded bg-white" href="{% if planta %}/plantas/{{ planta.id }}{% else %}/plantas{% endif %}">Cancelar</a>
+  </div>
+
+  <form class="mt-6 space-y-6" method="post" action="{{ action }}">
+    <section class="p-4 rounded border bg-white">
+      <div class="font-semibold">Identidad</div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-3">
+        <input name="nombre_cultivar" value="{{ form.nombre_cultivar or '' }}" class="border rounded px-3 py-2" placeholder="Nombre cultivar" />
+        <input name="especie" value="{{ form.especie or '' }}" class="border rounded px-3 py-2" placeholder="Especie" />
+        <select name="generacion" class="border rounded px-3 py-2" required>
+          {% for g in generaciones %}
+            <option value="{{ g }}" {% if form.generacion == g %}selected{% endif %}>{{ g }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-3">
+        <input name="ubicacion" value="{{ form.ubicacion or '' }}" class="border rounded px-3 py-2" placeholder="Ubicación" />
+        <input name="tamano_bulbo_cm" value="{{ form.tamano_bulbo_cm or '' }}" class="border rounded px-3 py-2" placeholder="Tamaño bulbo (cm)" />
+        <input name="num_bulbillos" value="{{ form.num_bulbillos or '' }}" class="border rounded px-3 py-2" placeholder="Nº bulbillos" />
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-3">
+        <select name="estado" class="border rounded px-3 py-2">
+          {% for e in estados %}
+            <option value="{{ e }}" {% if form.estado == e %}selected{% endif %}>{{ e }}</option>
+          {% endfor %}
+        </select>
+        <select name="ploidy_sospecha" class="border rounded px-3 py-2">
+          {% for p in ploidies %}
+            <option value="{{ p }}" {% if form.ploidy_sospecha == p %}selected{% endif %}>{{ p }}</option>
+          {% endfor %}
+        </select>
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" name="ploidy_confirmado" {% if form.ploidy_confirmado %}checked{% endif %} />
+          Ploidía confirmada
+        </label>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-3">
+        <input name="fecha_semilla" value="{{ form.fecha_semilla or '' }}" class="border rounded px-3 py-2" placeholder="Fecha semilla (YYYY-MM-DD)" />
+        <input name="fecha_primera_floracion" value="{{ form.fecha_primera_floracion or '' }}" class="border rounded px-3 py-2" placeholder="1ª floración (YYYY-MM-DD)" />
+        <input name="num_ejemplares_fisicos" value="{{ form.num_ejemplares_fisicos or 1 }}" class="border rounded px-3 py-2" placeholder="Nº ejemplares" />
+      </div>
+    </section>
+
+    <section id="fenotipo" class="p-4 rounded border bg-white">
+      <div class="flex items-center justify-between">
+        <div class="font-semibold">Fenotipo</div>
+        <div class="text-xs text-slate-500">Opcional</div>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-3">
+        <input name="fen_color_base" value="{{ fen.color_base or '' }}" class="border rounded px-3 py-2" placeholder="Color base" />
+        <div></div>
+        <select name="fen_tipo_patron" class="border rounded px-3 py-2">
+          <option value="">Tipo patrón</option>
+          {% for tp in tipo_patrones %}
+            <option value="{{ tp }}" {% if fen.tipo_patron == tp %}selected{% endif %}>{{ tp }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-3">
+        <input name="fen_color_ojo" value="{{ fen.color_ojo or '' }}" class="border rounded px-3 py-2" placeholder="Color ojo" />
+        <input name="fen_color_secundario" value="{{ fen.color_secundario or '' }}" class="border rounded px-3 py-2" placeholder="Color secundario" />
+        <select name="fen_patron_papilio" class="border rounded px-3 py-2">
+          <option value="">Papilio</option>
+          {% for pp in papilio_opts %}
+            <option value="{{ pp }}" {% if fen.patron_papilio == pp %}selected{% endif %}>{{ pp }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-3">
+        <input name="fen_altura_vara_floral_cm" value="{{ fen.altura_vara_floral_cm or '' }}" class="border rounded px-3 py-2" placeholder="Altura vara floral (cm)" />
+        <input name="fen_longitud_flor_cm" value="{{ fen.longitud_flor_cm or '' }}" class="border rounded px-3 py-2" placeholder="Longitud flor (cm)" />
+        <input name="fen_diametro_flor_cm" value="{{ fen.diametro_flor_cm or '' }}" class="border rounded px-3 py-2" placeholder="Diámetro flor (cm)" />
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-3">
+        <label class="flex items-center gap-2 text-sm">
+          <input type="checkbox" name="fen_flor_doble" {% if fen.flor_doble %}checked{% endif %} />
+          Flor doble
+        </label>
+        <input name="fen_color_hojas" value="{{ fen.color_hojas or '' }}" class="border rounded px-3 py-2" placeholder="Color de la hoja" />
+        <div></div>
+      </div>
+    </section>
+
+    <section id="genotipo" class="p-4 rounded border bg-white">
+      <div class="flex items-center justify-between">
+        <div class="font-semibold">Genotipo por locus</div>
+        <div class="text-xs text-slate-500">Una fila por locus</div>
+      </div>
+
+      {% if loci|length == 0 %}
+        <div class="text-sm text-slate-500 mt-3">No hay loci cargados.</div>
+      {% else %}
+        <div class="mt-4 overflow-x-auto border rounded">
+          <table class="min-w-full text-sm bg-white">
+            <thead class="bg-slate-50">
+              <tr>
+                <th class="text-left p-2">Locus</th>
+                <th class="text-left p-2">Alelo 1</th>
+                <th class="text-left p-2">Alelo 2</th>
+                <th class="text-left p-2">Confianza</th>
+                <th class="text-left p-2">Método</th>
+                <th class="text-left p-2">Fuente</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for locus in loci %}
+                {% set g = gen_by_locus.get(locus.id) %}
+                <tr class="border-t">
+                  <td class="p-2">
+                    <div class="font-semibold">{{ locus.codigo }}</div>
+                    <div class="text-xs text-slate-500">{{ locus.categoria.value if locus.categoria else '' }}</div>
+                  </td>
+                  <td class="p-2">
+                    <input name="gl_{{ locus.id }}_alelo_1" value="{{ g.alelo_1 if g else '?' }}" class="border rounded px-2 py-1 w-36" />
+                  </td>
+                  <td class="p-2">
+                    <input name="gl_{{ locus.id }}_alelo_2" value="{{ g.alelo_2 if g else '?' }}" class="border rounded px-2 py-1 w-36" />
+                  </td>
+                  <td class="p-2">
+                    <select name="gl_{{ locus.id }}_confianza" class="border rounded px-2 py-1">
+                      {% for c in confianzas %}
+                        <option value="{{ c }}" {% if g and g.confianza == c %}selected{% endif %}>{{ c }}</option>
+                      {% endfor %}
+                    </select>
+                  </td>
+                  <td class="p-2">
+                    <select name="gl_{{ locus.id }}_metodo" class="border rounded px-2 py-1">
+                      {% for m in metodos %}
+                        <option value="{{ m }}" {% if g and g.metodo_inferencia == m %}selected{% endif %}>{{ m }}</option>
+                      {% endfor %}
+                    </select>
+                  </td>
+                  <td class="p-2">
+                    <input name="gl_{{ locus.id }}_fuente" value="{{ g.fuente_evidencia if g else '' }}" class="border rounded px-2 py-1 w-56" placeholder="texto libre" />
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
+    </section>
+
+    <section class="p-4 rounded border bg-white">
+      <div class="font-semibold">Notas</div>
+      <textarea name="notas" rows="5" class="border rounded px-3 py-2 w-full mt-2" placeholder="Notas">{{ form.notas or '' }}</textarea>
+    </section>
+
+    <div class="flex items-center justify-end gap-2">
+      <button class="px-4 py-2 rounded bg-primary text-white">Guardar</button>
+    </div>
+  </form>
+{% endblock %}

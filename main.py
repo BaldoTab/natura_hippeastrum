@@ -1,10 +1,11 @@
 from __future__ import annotations
 
 import datetime as dt
+import json
 import logging
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, File, Form, Request, UploadFile
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -12,14 +13,15 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 import crud
-from database import Base, SessionLocal, engine, get_db
+from database import SessionLocal, engine, get_db
 from image_utils import save_image_and_thumbnail
-from migrations_auto import ensure_columns
+from migration_utils import run_migrations
 from models import (
     CoincideEnum,
     ConfianzaEnum,
     ConfianzaGenotipoEnum,
     EstadoCapsulaEnum,
+    EstadoCuracionEnum,
     EstadoPlantaEnum,
     EtapaFotoEnum,
     FecundacionEnum,
@@ -28,15 +30,19 @@ from models import (
     PapilioEnum,
     PloidyEnum,
     PrioridadEnum,
+    TipoAfirmacionEnum,
+    TipoEntidadLocusEnum,
     TipoPatronEnum,
 )
-from models import Capsula, Cruce, Foto, GenReferencia, Planta, Tarea
+from models import Capsula, Cruce, Foto, Planta, Tarea
+from reference_service import load_reference_catalog, sync_reference_catalog
 
 
 APP_DIR = Path(__file__).resolve().parent
 STATIC_DIR = APP_DIR / "static"
 PHOTOS_DIR = STATIC_DIR / "photos"
 THUMBS_DIR = STATIC_DIR / "thumbnails"
+REFERENCE_CATALOG_PATH = APP_DIR / "data" / "reference_catalog.json"
 
 logging.basicConfig(
     filename=str(APP_DIR / "app.log"),
@@ -54,12 +60,10 @@ templates = Jinja2Templates(directory=str(APP_DIR / "templates"))
 
 @app.on_event("startup")
 def on_startup() -> None:
-    Base.metadata.create_all(bind=engine)
-    ensure_columns(engine)
+    run_migrations(engine)
     session = SessionLocal()
     try:
-        crud.seed_genes_referencia(session)
-        crud.seed_loci_referencia(session)
+        sync_reference_catalog(session, load_reference_catalog(REFERENCE_CATALOG_PATH))
         _seed_demo(session)
     finally:
         session.close()
@@ -84,15 +88,6 @@ def _seed_demo(session: Session) -> None:
         ploidy_sospecha=PloidyEnum.Desconocido,
         notas="rojo uniforme estrella blanca-verdosa",
     )
-    locus_r = crud.get_locus_by_codigo(session, "R")
-    locus_w = crud.get_locus_by_codigo(session, "W")
-    locus_d = crud.get_locus_by_codigo(session, "D")
-    if locus_r:
-        crud.upsert_genotipo_locus(session, hp1.id, locus_r.id, {"alelo_1": "R", "alelo_2": "R", "confianza": ConfianzaGenotipoEnum.Baja_visual, "metodo_inferencia": MetodoInferenciaEnum.Observacion_fenotipo})
-    if locus_w:
-        crud.upsert_genotipo_locus(session, hp1.id, locus_w.id, {"alelo_1": "w", "alelo_2": "w", "confianza": ConfianzaGenotipoEnum.Baja_visual, "metodo_inferencia": MetodoInferenciaEnum.Observacion_fenotipo})
-    if locus_d:
-        crud.upsert_genotipo_locus(session, hp1.id, locus_d.id, {"alelo_1": "d", "alelo_2": "d", "confianza": ConfianzaGenotipoEnum.Baja_visual, "metodo_inferencia": MetodoInferenciaEnum.Observacion_fenotipo})
     crud.upsert_fenotipo(session, hp1.id, {"color_base": "Rojo", "tipo_patron": TipoPatronEnum.Uniforme})
 
     hp2 = add_planta(
@@ -102,16 +97,6 @@ def _seed_demo(session: Session) -> None:
         estado=EstadoPlantaEnum.Excelente,
         notas="crema-verdoso venas rojas",
     )
-    locus_p = crud.get_locus_by_codigo(session, "P")
-    locus_y = crud.get_locus_by_codigo(session, "Y")
-    if locus_p:
-        crud.upsert_genotipo_locus(session, hp2.id, locus_p.id, {"alelo_1": "P_papilio", "alelo_2": "P_papilio", "confianza": ConfianzaGenotipoEnum.Baja_visual, "metodo_inferencia": MetodoInferenciaEnum.Observacion_fenotipo})
-    if locus_y:
-        crud.upsert_genotipo_locus(session, hp2.id, locus_y.id, {"alelo_1": "Y", "alelo_2": "y", "confianza": ConfianzaGenotipoEnum.Baja_visual, "metodo_inferencia": MetodoInferenciaEnum.Observacion_fenotipo})
-    if locus_w:
-        crud.upsert_genotipo_locus(session, hp2.id, locus_w.id, {"alelo_1": "w", "alelo_2": "w", "confianza": ConfianzaGenotipoEnum.Baja_visual, "metodo_inferencia": MetodoInferenciaEnum.Observacion_fenotipo})
-    if locus_d:
-        crud.upsert_genotipo_locus(session, hp2.id, locus_d.id, {"alelo_1": "d", "alelo_2": "d", "confianza": ConfianzaGenotipoEnum.Baja_visual, "metodo_inferencia": MetodoInferenciaEnum.Observacion_fenotipo})
     crud.upsert_fenotipo(session, hp2.id, {"color_base": "Crema-verdoso", "tipo_patron": TipoPatronEnum.Papilio, "patron_papilio": PapilioEnum.Si})
 
     hp3 = add_planta(
@@ -129,10 +114,6 @@ def _seed_demo(session: Session) -> None:
         estado=EstadoPlantaEnum.Bueno,
         notas="blanco con borde coral",
     )
-    if locus_w:
-        crud.upsert_genotipo_locus(session, hp4.id, locus_w.id, {"alelo_1": "W", "alelo_2": "?", "confianza": ConfianzaGenotipoEnum.Baja_visual, "metodo_inferencia": MetodoInferenciaEnum.Observacion_fenotipo})
-    if locus_d:
-        crud.upsert_genotipo_locus(session, hp4.id, locus_d.id, {"alelo_1": "d", "alelo_2": "d", "confianza": ConfianzaGenotipoEnum.Baja_visual, "metodo_inferencia": MetodoInferenciaEnum.Observacion_fenotipo})
 
     hp5 = add_planta(
         nombre_cultivar="Amazing Belle",
@@ -141,8 +122,6 @@ def _seed_demo(session: Session) -> None:
         estado=EstadoPlantaEnum.Bueno,
         notas="rosa doble",
     )
-    if locus_d:
-        crud.upsert_genotipo_locus(session, hp5.id, locus_d.id, {"alelo_1": "D", "alelo_2": "d", "confianza": ConfianzaGenotipoEnum.Baja_visual, "metodo_inferencia": MetodoInferenciaEnum.Observacion_fenotipo})
 
     hp6 = add_planta(
         nombre_cultivar="White Glory",
@@ -151,10 +130,6 @@ def _seed_demo(session: Session) -> None:
         estado=EstadoPlantaEnum.Bueno,
         notas="blanco doble",
     )
-    if locus_w:
-        crud.upsert_genotipo_locus(session, hp6.id, locus_w.id, {"alelo_1": "W", "alelo_2": "W", "confianza": ConfianzaGenotipoEnum.Baja_visual, "metodo_inferencia": MetodoInferenciaEnum.Observacion_fenotipo})
-    if locus_d:
-        crud.upsert_genotipo_locus(session, hp6.id, locus_d.id, {"alelo_1": "D", "alelo_2": "d", "confianza": ConfianzaGenotipoEnum.Baja_visual, "metodo_inferencia": MetodoInferenciaEnum.Observacion_fenotipo})
 
     hp7 = add_planta(
         nombre_cultivar="Red Cream Queen",
@@ -225,6 +200,64 @@ def _breadcrumbs(parts: list[tuple[str, str | None]]) -> str:
         else:
             crumbs.append(f"<span>{label}</span>")
     return " / ".join(crumbs)
+
+
+async def _parse_genotipos_form(request: Request, db: Session, existing: dict[int, object]) -> list[dict]:
+    form = await request.form()
+    loci = {locus.id: locus for locus in crud.list_loci_referencia(db)}
+    locus_ids: set[int] = set()
+    for key in form:
+        if not key.startswith("gl_"):
+            continue
+        try:
+            locus_ids.add(int(key.split("_")[1]))
+        except (IndexError, ValueError):
+            raise HTTPException(status_code=400, detail="Campo de genotipo inválido") from None
+
+    entries: list[dict] = []
+    for locus_id in sorted(locus_ids):
+        if locus_id not in loci:
+            raise HTTPException(status_code=400, detail=f"Locus desconocido: {locus_id}")
+        prefix = f"gl_{locus_id}_"
+
+        def allele(field: str, optional: bool = False) -> str | None:
+            value = str(form.get(prefix + field, "") or "").strip()
+            if not value:
+                return None if optional else "?"
+            if len(value) > 50 or "/" in value:
+                raise HTTPException(status_code=400, detail=f"Alelo inválido para {loci[locus_id].codigo}")
+            return value
+
+        try:
+            confianza = ConfianzaGenotipoEnum(form.get(prefix + "confianza", ConfianzaGenotipoEnum.Desconocido.value))
+            metodo = MetodoInferenciaEnum(form.get(prefix + "metodo", MetodoInferenciaEnum.Desconocido.value))
+        except ValueError:
+            raise HTTPException(status_code=400, detail=f"Confianza o método inválido para {loci[locus_id].codigo}") from None
+
+        data = {
+            "alelo_1": allele("alelo_1"),
+            "alelo_2": allele("alelo_2"),
+            "alelo_3": allele("alelo_3", optional=True),
+            "alelo_4": allele("alelo_4", optional=True),
+            "confianza": confianza,
+            "metodo_inferencia": metodo,
+            "fuente_evidencia": str(form.get(prefix + "fuente", "") or "").strip() or None,
+        }
+        known_allele = any(value not in {None, "?"} for value in (data["alelo_1"], data["alelo_2"], data["alelo_3"], data["alelo_4"]))
+        active = (
+            known_allele
+            or bool(data["fuente_evidencia"])
+            or confianza != ConfianzaGenotipoEnum.Desconocido
+            or metodo != MetodoInferenciaEnum.Desconocido
+        )
+        if not active:
+            if locus_id in existing:
+                entries.append({"locus_id": locus_id, "datos": None})
+            continue
+        if confianza == ConfianzaGenotipoEnum.Confirmado_lab and not data["fuente_evidencia"]:
+            raise HTTPException(status_code=400, detail=f"Una confirmación de laboratorio necesita fuente para {loci[locus_id].codigo}")
+        entries.append({"locus_id": locus_id, "datos": data if active else None})
+    return entries
 
 
 def _plant_thumb(session: Session, planta_id: int) -> str | None:
@@ -321,7 +354,7 @@ def plantas_list(
 
 
 @app.get("/plantas/new", response_class=HTMLResponse)
-def plantas_new(request: Request):
+def plantas_new(request: Request, db: Session = Depends(get_db)):
     return templates.TemplateResponse(
         request,
         "plantas/form.html",
@@ -332,7 +365,8 @@ def plantas_new(request: Request):
             "action": "/plantas/new",
             "form": {"generacion": GeneracionEnum.F0.value, "estado": EstadoPlantaEnum.Bueno.value, "ploidy_sospecha": PloidyEnum.Desconocido.value, "num_ejemplares_fisicos": 1},
             "fen": {},
-            "gen": {},
+            "loci": crud.list_loci_referencia(db),
+            "gen_by_locus": {},
             "generaciones": [g.value for g in GeneracionEnum],
             "estados": [e.value for e in EstadoPlantaEnum],
             "ploidies": [p.value for p in PloidyEnum],
@@ -345,7 +379,8 @@ def plantas_new(request: Request):
 
 
 @app.post("/plantas/new")
-def plantas_new_post(
+async def plantas_new_post(
+    request: Request,
     nombre_cultivar: str | None = Form(default=None),
     especie: str | None = Form(default=None),
     generacion: str = Form(...),
@@ -371,6 +406,7 @@ def plantas_new_post(
     fen_color_hojas: str | None = Form(default=None),
     db: Session = Depends(get_db),
 ):
+    genotipos = await _parse_genotipos_form(request, db, {})
     planta = crud.create_planta(
         db,
         {
@@ -419,6 +455,7 @@ def plantas_new_post(
             },
         )
 
+    crud.sync_genotipos_planta(db, planta.id, genotipos)
     return RedirectResponse(url=f"/plantas/{planta.id}", status_code=303)
 
 
@@ -489,8 +526,9 @@ def plantas_edit(planta_id: int, request: Request, db: Session = Depends(get_db)
 
 
 @app.post("/plantas/{planta_id}/edit")
-def plantas_edit_post(
+async def plantas_edit_post(
     planta_id: int,
+    request: Request,
     nombre_cultivar: str | None = Form(default=None),
     especie: str | None = Form(default=None),
     generacion: str = Form(...),
@@ -520,6 +558,8 @@ def plantas_edit_post(
     if not planta:
         return RedirectResponse(url="/plantas", status_code=303)
 
+    existing = {row.locus_id: row for row in crud.list_genotipos_planta(db, planta_id)}
+    genotipos = await _parse_genotipos_form(request, db, existing)
     crud.update_planta(
         db,
         planta,
@@ -569,6 +609,7 @@ def plantas_edit_post(
             },
         )
 
+    crud.sync_genotipos_planta(db, planta_id, genotipos)
     return RedirectResponse(url=f"/plantas/{planta_id}", status_code=303)
 
 
@@ -839,13 +880,136 @@ def predictor(request: Request):
     )
 
 
+def _reference_labels() -> dict:
+    return {
+        "estados": {state.value: state.value.replace("_", " ") for state in EstadoCuracionEnum},
+        "entidades": {
+            TipoEntidadLocusEnum.Locus_clasico.value: "Locus clásico",
+            TipoEntidadLocusEnum.Gen_molecular.value: "Gen molecular",
+            TipoEntidadLocusEnum.Marcador.value: "Marcador",
+        },
+        "afirmaciones": {
+            TipoAfirmacionEnum.Identidad.value: "Identidad",
+            TipoAfirmacionEnum.Funcion.value: "Función",
+            TipoAfirmacionEnum.Efecto_alelo.value: "Efecto alélico",
+            TipoAfirmacionEnum.Herencia.value: "Herencia",
+            TipoAfirmacionEnum.Epistasis.value: "Epistasis",
+            TipoAfirmacionEnum.Expresion.value: "Expresión",
+            TipoAfirmacionEnum.Ruta_bioquimica.value: "Ruta bioquímica",
+            TipoAfirmacionEnum.Asociacion_fenotipica.value: "Asociación fenotípica",
+            TipoAfirmacionEnum.Limitacion.value: "Limitación",
+        },
+        "metodos": {
+            "Experimento_directo": "Experimento directo",
+            "Segregacion": "Segregación",
+            "Asociacion_molecular": "Asociación molecular",
+            "Homologia": "Homología",
+            "Inferencia": "Inferencia",
+            "Observacion_local": "Observación local",
+            "Revision": "Revisión",
+        },
+        "relaciones": {"Apoya": "Apoya", "Contradice": "Contradice", "Contexto": "Contexto"},
+    }
+
+
 @app.get("/referencia", response_class=HTMLResponse)
-def referencia(request: Request, db: Session = Depends(get_db)):
-    genes = db.execute(select(GenReferencia).order_by(GenReferencia.gen.asc())).scalars().all()
+def referencia(
+    request: Request,
+    db: Session = Depends(get_db),
+    q: str | None = None,
+    categoria: str | None = None,
+    estado: str | None = None,
+    tipo_entidad: str | None = None,
+):
+    loci = crud.list_referencia_loci(
+        db,
+        q=q,
+        categoria=categoria,
+        estado=estado,
+        tipo_entidad=tipo_entidad,
+    )
+    items = []
+    for locus in loci:
+        evidences = [evidence for claim in locus.afirmaciones for evidence in claim.evidencias]
+        items.append(
+            {
+                "locus": locus,
+                "claims": len(locus.afirmaciones),
+                "evidences": len(evidences),
+                "sources": len({evidence.fuente_id for evidence in evidences}),
+                "reviewed": sum(
+                    claim.estado in {EstadoCuracionEnum.Revisado, EstadoCuracionEnum.Aceptado}
+                    for claim in locus.afirmaciones
+                ),
+            }
+        )
+    labels = _reference_labels()
+    all_loci = crud.list_referencia_loci(db)
+    categories = sorted({locus.categoria.value for locus in all_loci})
+    sources_count = len(
+        {
+            evidence.fuente_id
+            for locus in all_loci
+            for claim in locus.afirmaciones
+            for evidence in claim.evidencias
+        }
+    )
     return templates.TemplateResponse(
         request,
         "referencia/index.html",
-        {"request": request, "breadcrumbs": _breadcrumbs([("Referencia", None)]), "genes": genes},
+        {
+            "request": request,
+            "breadcrumbs": _breadcrumbs([("Referencia", None)]),
+            "items": items,
+            "labels": labels,
+            "categories": categories,
+            "entities": labels["entidades"],
+            "states": labels["estados"],
+            "filters": {"q": q or "", "categoria": categoria or "", "estado": estado or "", "tipo_entidad": tipo_entidad or ""},
+            "summary": {
+                "loci": len(all_loci),
+                "reviewed": sum(locus.estado_curacion in {EstadoCuracionEnum.Revisado, EstadoCuracionEnum.Aceptado} for locus in all_loci),
+                "disputed": sum(locus.estado_curacion == EstadoCuracionEnum.Disputado for locus in all_loci),
+                "sources": sources_count,
+            },
+        },
+    )
+
+
+@app.get("/referencia/bases", response_class=HTMLResponse)
+def referencia_bases(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "referencia/bases.html",
+        {
+            "request": request,
+            "breadcrumbs": _breadcrumbs([("Referencia", "/referencia"), ("Bases sobre genética", None)]),
+        },
+    )
+
+
+@app.get("/referencia/{locus_id}", response_class=HTMLResponse)
+def referencia_locus(locus_id: int, request: Request, db: Session = Depends(get_db)):
+    locus = crud.get_locus_referencia(db, locus_id)
+    if locus is None:
+        raise HTTPException(status_code=404, detail="Locus no encontrado")
+    sources = {
+        evidence.fuente_id: evidence.fuente
+        for claim in locus.afirmaciones
+        for evidence in claim.evidencias
+    }
+    return templates.TemplateResponse(
+        request,
+        "referencia/locus.html",
+        {
+            "request": request,
+            "breadcrumbs": _breadcrumbs([("Referencia", "/referencia"), (locus.codigo, None)]),
+            "locus": locus,
+            "claims": sorted(locus.afirmaciones, key=lambda claim: (claim.version == 1, claim.codigo_estable)),
+            "aliases": json.loads(locus.nombres_alternativos) if locus.nombres_alternativos else [],
+            "labels": _reference_labels(),
+            "sources": [sources[key] for key in sorted(sources)],
+        },
     )
 
 

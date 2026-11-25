@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}{{ locus.codigo }} · Referencia genética{% endblock %}
+{% block content %}
+  {% set state_classes = {
+    'Borrador': 'bg-slate-100 text-slate-700',
+    'Pendiente_revision': 'bg-amber-50 text-amber-800',
+    'Revisado': 'bg-blue-50 text-blue-800',
+    'Aceptado': 'bg-green-50 text-green-800',
+    'Disputado': 'bg-red-50 text-red-800',
+    'Obsoleto': 'bg-slate-200 text-slate-600'
+  } %}
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <div class="mono text-sm text-slate-500">{{ locus.codigo }}</div>
+      <h1 class="text-2xl font-semibold mt-1">{{ locus.nombre_completo }}</h1>
+      <div class="flex flex-wrap gap-2 mt-3">
+        <span class="px-2 py-1 rounded text-xs bg-slate-100 text-slate-700">{{ labels.entidades[locus.tipo_entidad.value] }}</span>
+        <span class="px-2 py-1 rounded text-xs {{ state_classes[locus.estado_curacion.value] }}">{{ labels.estados[locus.estado_curacion.value] }}</span>
+        <span class="px-2 py-1 rounded text-xs bg-slate-100 text-slate-700">{{ locus.categoria.value.replace('_', ' ') }}</span>
+      </div>
+    </div>
+    <div class="flex flex-wrap gap-2">
+      <a class="px-3 py-2 border rounded bg-white text-sm" href="/referencia/bases">Bases sobre genética</a>
+      <a class="px-3 py-2 border rounded bg-white text-sm" href="/referencia">Volver al catálogo</a>
+    </div>
+  </div>
+
+  <p class="mt-4 text-slate-700 max-w-4xl">{{ locus.resumen or 'Sin resumen curado.' }}</p>
+
+  <div class="mt-5 grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+    <div class="p-3 rounded border bg-white">
+      <div class="text-xs text-slate-500">Alcance de especie</div>
+      <div class="mt-1">{{ locus.especie_alcance }}</div>
+    </div>
+    <div class="p-3 rounded border bg-white">
+      <div class="text-xs text-slate-500">Versión del locus</div>
+      <div class="mt-1 mono">v{{ locus.version }}{% if locus.fecha_ultima_revision %} · {{ locus.fecha_ultima_revision }}{% endif %}</div>
+    </div>
+    <div class="p-3 rounded border bg-white">
+      <div class="text-xs text-slate-500">Nombres alternativos</div>
+      <div class="mt-1 mono">{{ aliases|join(', ') if aliases else '—' }}</div>
+    </div>
+  </div>
+
+  <div class="mt-6 p-4 rounded border border-amber-200 bg-amber-50 text-sm text-amber-950">
+    <strong>Uso responsable:</strong> una afirmación revisada describe únicamente el material, método y alcance indicados. No convierte un símbolo clásico en gen confirmado ni autoriza inferir alelos, dominancia o epistasis desde el fenotipo.
+  </div>
+
+  <section class="mt-8">
+    <div class="flex items-center justify-between gap-3">
+      <h2 class="text-lg font-semibold">Afirmaciones y evidencia</h2>
+      <span class="text-xs text-slate-500">{{ claims|length }} afirmaciones</span>
+    </div>
+
+    <div class="mt-4 space-y-4">
+      {% for claim in claims %}
+        <article class="p-5 rounded border bg-white">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2 py-1 rounded text-xs bg-slate-100 text-slate-700">{{ labels.afirmaciones[claim.tipo.value] }}</span>
+              <span class="px-2 py-1 rounded text-xs {{ state_classes[claim.estado.value] }}">{{ labels.estados[claim.estado.value] }}</span>
+              <span class="px-2 py-1 rounded text-xs bg-slate-50 text-slate-500 mono">v{{ claim.version }}</span>
+            </div>
+            <div class="text-xs text-slate-400 mono">{{ claim.codigo_estable }}</div>
+          </div>
+
+          <p class="mt-4 text-slate-800">{{ claim.texto }}</p>
+
+          <dl class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+            <div>
+              <dt class="text-xs text-slate-500">Especie / material</dt>
+              <dd class="mt-1">{{ claim.especie_alcance }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-slate-500">Contexto experimental</dt>
+              <dd class="mt-1">{{ claim.contexto or '—' }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-slate-500">Revisión</dt>
+              <dd class="mt-1">{{ claim.revisado_por or 'Sin revisión documental registrada' }}{% if claim.fecha_revision %} · {{ claim.fecha_revision }}{% endif %}</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-slate-500">Limitaciones</dt>
+              <dd class="mt-1">{{ claim.notas_limitaciones or 'Sin limitaciones registradas.' }}</dd>
+            </div>
+          </dl>
+
+          <div class="mt-5 pt-4 border-t">
+            <h3 class="text-sm font-semibold">Evidencias</h3>
+            {% if claim.evidencias|length == 0 %}
+              <p class="mt-2 text-sm text-slate-500">Sin evidencia científica cargada. Esta afirmación no debe usarse para inferir genotipo o predecir descendencia.</p>
+            {% else %}
+              <div class="mt-3 space-y-3">
+                {% for evidence in claim.evidencias %}
+                  {% set source = evidence.fuente %}
+                  <div class="p-4 rounded border bg-slate-50">
+                    <div class="flex flex-wrap gap-2 text-xs">
+                      <span class="px-2 py-1 rounded bg-white border">{{ labels.metodos[evidence.metodo_evidencia.value] }}</span>
+                      <span class="px-2 py-1 rounded bg-white border">Fuerza: {{ evidence.fuerza.value }}</span>
+                      <span class="px-2 py-1 rounded bg-white border">{{ labels.relaciones[evidence.relacion.value] }}</span>
+                    </div>
+                    <div class="mt-3 text-sm">
+                      <div class="font-medium">{{ source.cita_completa }}</div>
+                      <div class="text-xs text-slate-500 mt-1">{{ source.identificador_publico or 'Sin identificador público' }}</div>
+                      {% if source.url or source.doi or source.pmid %}
+                        {% if source.url %}
+                          {% set source_url = source.url %}
+                        {% elif source.doi %}
+                          {% set source_url = 'https://doi.org/' ~ source.doi %}
+                        {% else %}
+                          {% set source_url = 'https://pubmed.ncbi.nlm.nih.gov/' ~ source.pmid ~ '/' %}
+                        {% endif %}
+                        <a class="inline-block mt-2 text-primary underline text-xs" href="{{ source_url }}" target="_blank" rel="noopener noreferrer">Abrir fuente</a>
+                      {% endif %}
+                    </div>
+                    <dl class="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <dt class="text-xs text-slate-500">Localización exacta</dt>
+                        <dd class="mt-1">{{ evidence.localizacion_fuente or 'No indicada' }}</dd>
+                      </div>
+                      <div>
+                        <dt class="text-xs text-slate-500">Limitaciones de la evidencia</dt>
+                        <dd class="mt-1">{{ evidence.limitaciones or 'No indicadas' }}</dd>
+                      </div>
+                      {% if evidence.cita_textual %}
+                        <div class="md:col-span-2">
+                          <dt class="text-xs text-slate-500">Cita textual</dt>
+                          <dd class="mt-1 italic">“{{ evidence.cita_textual }}”</dd>
+                        </div>
+                      {% endif %}
+                    </dl>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  {% if sources|length > 0 %}
+    <section class="mt-8">
+      <h2 class="text-lg font-semibold">Fuentes de esta ficha</h2>
+      <div class="mt-3 space-y-2">
+        {% for source in sources %}
+          <div class="p-3 rounded border bg-white text-sm">
+            <span class="mono text-xs text-slate-500">{{ source.clave }}</span>
+            <div class="mt-1">{{ source.cita_completa }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+{% endblock %}

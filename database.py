@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import os
 from collections.abc import Generator
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
 
-DATABASE_URL = "sqlite:///./hippeastrum.db"
+DATABASE_URL = os.getenv("HIPPEASTRUM_DATABASE_URL", "sqlite:///./hippeastrum.db")
 
 engine = create_engine(
     DATABASE_URL,

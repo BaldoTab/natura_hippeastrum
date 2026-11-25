@@ -99,6 +99,7 @@
         <div class="font-semibold">Genotipo por locus</div>
         <div class="text-xs text-slate-500">Una fila por locus</div>
       </div>
+      <div class="text-xs text-slate-500 mt-2">Usa <span class="mono">?</span> para un alelo desconocido. Una fila nueva requiere un alelo conocido, una fuente o confianza/método distinto de «Desconocido».</div>
 
       {% if loci|length == 0 %}
         <div class="text-sm text-slate-500 mt-3">No hay loci cargados.</div>
@@ -110,6 +111,8 @@
                 <th class="text-left p-2">Locus</th>
                 <th class="text-left p-2">Alelo 1</th>
                 <th class="text-left p-2">Alelo 2</th>
+                <th class="text-left p-2">Alelo 3</th>
+                <th class="text-left p-2">Alelo 4</th>
                 <th class="text-left p-2">Confianza</th>
                 <th class="text-left p-2">Método</th>
                 <th class="text-left p-2">Fuente</th>
@@ -124,22 +127,28 @@
                     <div class="text-xs text-slate-500">{{ locus.categoria.value if locus.categoria else '' }}</div>
                   </td>
                   <td class="p-2">
-                    <input name="gl_{{ locus.id }}_alelo_1" value="{{ g.alelo_1 if g else '?' }}" class="border rounded px-2 py-1 w-36" />
+                    <input name="gl_{{ locus.id }}_alelo_1" value="{{ g.alelo_1 if g else '?' }}" maxlength="50" class="border rounded px-2 py-1 w-36" />
                   </td>
                   <td class="p-2">
-                    <input name="gl_{{ locus.id }}_alelo_2" value="{{ g.alelo_2 if g else '?' }}" class="border rounded px-2 py-1 w-36" />
+                    <input name="gl_{{ locus.id }}_alelo_2" value="{{ g.alelo_2 if g else '?' }}" maxlength="50" class="border rounded px-2 py-1 w-36" />
+                  </td>
+                  <td class="p-2">
+                    <input name="gl_{{ locus.id }}_alelo_3" value="{{ g.alelo_3 if g and g.alelo_3 else '' }}" maxlength="50" class="border rounded px-2 py-1 w-36" placeholder="Opcional" />
+                  </td>
+                  <td class="p-2">
+                    <input name="gl_{{ locus.id }}_alelo_4" value="{{ g.alelo_4 if g and g.alelo_4 else '' }}" maxlength="50" class="border rounded px-2 py-1 w-36" placeholder="Opcional" />
                   </td>
                   <td class="p-2">
                     <select name="gl_{{ locus.id }}_confianza" class="border rounded px-2 py-1">
                       {% for c in confianzas %}
-                        <option value="{{ c }}" {% if g and g.confianza == c %}selected{% endif %}>{{ c }}</option>
+                        <option value="{{ c }}" {% if (g and g.confianza == c) or (not g and c == 'Desconocido') %}selected{% endif %}>{{ c }}</option>
                       {% endfor %}
                     </select>
                   </td>
                   <td class="p-2">
                     <select name="gl_{{ locus.id }}_metodo" class="border rounded px-2 py-1">
                       {% for m in metodos %}
-                        <option value="{{ m }}" {% if g and g.metodo_inferencia == m %}selected{% endif %}>{{ m }}</option>
+                        <option value="{{ m }}" {% if (g and g.metodo_inferencia == m) or (not g and m == 'Desconocido') %}selected{% endif %}>{{ m }}</option>
                       {% endfor %}
                     </select>
                   </td>

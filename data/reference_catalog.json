@@ -1,0 +1,486 @@
+{
+  "version": 2,
+  "revisado_el": "2026-11-25",
+  "revisado_por": "Revisión documental asistida por IA",
+  "fuentes": [
+    {
+      "clave": "li-2023-hpmyb1",
+      "tipo": "Articulo_primario",
+      "autores": "Li, Ji; Wu, Kunlin; Li, Lin; Ma, Guohua; Fang, Lin; Zeng, Songjun",
+      "titulo": "Identification of HpMYB1 inducing anthocyanin accumulation in Hippeastrum hybridum tepals by RNA-seq",
+      "publicacion": "BMC Plant Biology",
+      "anio": 2023,
+      "volumen": "23",
+      "numero": "1",
+      "paginas": "594",
+      "doi": "10.1186/s12870-023-04582-4",
+      "pmid": "38012575",
+      "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10683291/",
+      "accession": "OQ446482",
+      "fecha_consulta": "2026-11-25",
+      "notas": "Artículo primario de acceso abierto. La accession OQ446482 corresponde a HpMYB1, no al artículo completo."
+    }
+  ],
+  "loci": [
+    {
+      "codigo": "R",
+      "nombre_completo": "R — símbolo clásico de color rojo/rosa",
+      "categoria": "Color_estructural",
+      "tipo_entidad": "Locus_clasico",
+      "nombres_alternativos": [],
+      "especie_alcance": "Hippeastrum cultivado",
+      "resumen": "Símbolo conservado del catálogo histórico. No está demostrada una equivalencia entre R y un gen molecular concreto.",
+      "estado_curacion": "Disputado",
+      "afirmaciones": [
+        {
+          "codigo_estable": "R-limite-clasico-v2",
+          "tipo": "Limitacion",
+          "texto": "R se conserva como símbolo clásico de color rojo/rosa, pero no se ha identificado aquí un gen molecular ni una relación alélica validada que permita equipararlo a HpMYB1.",
+          "especie_alcance": "Hippeastrum cultivado",
+          "contexto": "Revisión del catálogo histórico y de la evidencia molecular consultada",
+          "estado": "Disputado",
+          "revisado_por": null,
+          "fecha_revision": null,
+          "notas_limitaciones": "No usar R como marcador molecular confirmado ni como regla de predicción sin segregación y trazabilidad propias.",
+          "evidencias": []
+        }
+      ]
+    },
+    {
+      "codigo": "Y",
+      "nombre_completo": "Y — símbolo clásico de carotenoides",
+      "categoria": "Color_estructural",
+      "tipo_entidad": "Locus_clasico",
+      "nombres_alternativos": [],
+      "especie_alcance": "Hippeastrum cultivado",
+      "resumen": "Símbolo histórico para color amarillo/naranja. La base molecular y la herencia no están validadas en este catálogo.",
+      "estado_curacion": "Disputado",
+      "afirmaciones": [
+        {
+          "codigo_estable": "Y-limite-clasico-v2",
+          "tipo": "Limitacion",
+          "texto": "Y se conserva como símbolo clásico de carotenoides, sin una asignación molecular o un modelo de herencia validados para Hippeastrum.",
+          "especie_alcance": "Hippeastrum cultivado",
+          "contexto": "Revisión del catálogo histórico",
+          "estado": "Disputado",
+          "revisado_por": null,
+          "fecha_revision": null,
+          "notas_limitaciones": "La presencia de carotenoides no identifica por sí sola un locus Y ni sus alelos.",
+          "evidencias": []
+        }
+      ]
+    },
+    {
+      "codigo": "W",
+      "nombre_completo": "W — símbolo clásico de inhibición del color",
+      "categoria": "Regulador_color",
+      "tipo_entidad": "Locus_clasico",
+      "nombres_alternativos": [],
+      "especie_alcance": "Hippeastrum cultivado",
+      "resumen": "Símbolo histórico de inhibición/blanco. No hay evidencia directa cargada que valide su epistasis sobre R.",
+      "estado_curacion": "Disputado",
+      "afirmaciones": [
+        {
+          "codigo_estable": "W-limite-clasico-v2",
+          "tipo": "Limitacion",
+          "texto": "W se conserva como símbolo clásico de inhibición del color; la relación epistática W sobre R no se considera validada sin estudios de segregación o caracterización molecular.",
+          "especie_alcance": "Hippeastrum cultivado",
+          "contexto": "Revisión del catálogo histórico",
+          "estado": "Disputado",
+          "revisado_por": null,
+          "fecha_revision": null,
+          "notas_limitaciones": "Un fenotipo blanco no demuestra por sí solo el genotipo W ni su epistasis.",
+          "evidencias": []
+        }
+      ]
+    },
+    {
+      "codigo": "P",
+      "nombre_completo": "P — símbolo clásico de patrón de pigmento",
+      "categoria": "Patron",
+      "tipo_entidad": "Locus_clasico",
+      "nombres_alternativos": [],
+      "especie_alcance": "Hippeastrum cultivado",
+      "resumen": "Agrupa descriptores históricos de patrones. No se ha demostrado que papilio, borde o estrella sean alelos de un único locus.",
+      "estado_curacion": "Disputado",
+      "afirmaciones": [
+        {
+          "codigo_estable": "P-limite-clasico-v2",
+          "tipo": "Limitacion",
+          "texto": "P se conserva como categoría descriptiva de patrones de pigmento; no se ha validado que los patrones observados sean alelos de un mismo locus molecular.",
+          "especie_alcance": "Hippeastrum cultivado",
+          "contexto": "Revisión del catálogo histórico",
+          "estado": "Disputado",
+          "revisado_por": null,
+          "fecha_revision": null,
+          "notas_limitaciones": "Registrar el patrón como fenotipo; no convertirlo en un genotipo mendeliano sin evidencia experimental.",
+          "evidencias": []
+        }
+      ]
+    },
+    {
+      "codigo": "D",
+      "nombre_completo": "D — símbolo clásico de flor doble",
+      "categoria": "Morfologia",
+      "tipo_entidad": "Locus_clasico",
+      "nombres_alternativos": [],
+      "especie_alcance": "Hippeastrum cultivado",
+      "resumen": "Símbolo histórico de flor doble. No se ha localizado un gen molecular que justifique el modelo simple D/d.",
+      "estado_curacion": "Disputado",
+      "afirmaciones": [
+        {
+          "codigo_estable": "D-limite-clasico-v2",
+          "tipo": "Limitacion",
+          "texto": "D se conserva como símbolo clásico de flor doble, pero el modelo simple D/d y su dominancia no están validados molecularmente en este catálogo.",
+          "especie_alcance": "Hippeastrum cultivado",
+          "contexto": "Revisión del catálogo histórico",
+          "estado": "Disputado",
+          "revisado_por": null,
+          "fecha_revision": null,
+          "notas_limitaciones": "No inferir D/d a partir del número de tépalos sin segregación, carácter parental y trazabilidad del cruce.",
+          "evidencias": []
+        }
+      ]
+    },
+    {
+      "codigo": "HpMYB1",
+      "nombre_completo": "HpMYB1 — factor de transcripción R2R3-MYB",
+      "categoria": "Regulador_color",
+      "tipo_entidad": "Gen_molecular",
+      "nombres_alternativos": ["TRINITY_DN4295_c0_g1"],
+      "especie_alcance": "Hippeastrum × hybridum 'Royal Velvet'",
+      "resumen": "Gen clonado y expresado en tépalos. Su sobreexpresión heteróloga en tabaco aumenta antocianinas y activa genes de la ruta; no define por sí solo alelos o dominancia.",
+      "estado_curacion": "Revisado",
+      "afirmaciones": [
+        {
+          "codigo_estable": "HpMYB1-identidad-v2",
+          "tipo": "Identidad",
+          "texto": "HpMYB1 es un gen de H. × hybridum 'Royal Velvet' que codifica una proteína R2R3-MYB de 231 aminoácidos; la secuencia clonada tiene accession OQ446482.",
+          "especie_alcance": "Hippeastrum × hybridum 'Royal Velvet'",
+          "contexto": "Clonación y secuenciación a partir del unigene TRINITY_DN4295_c0_g1",
+          "estado": "Revisado",
+          "revisado_por": "Revisión documental asistida por IA",
+          "fecha_revision": "2026-11-25",
+          "notas_limitaciones": "La identidad de secuencia no demuestra variantes alélicas, dominancia ni efectos en todos los cultivares.",
+          "evidencias": [
+            {
+              "fuente": "li-2023-hpmyb1",
+              "metodo_evidencia": "Experimento_directo",
+              "fuerza": "Alta",
+              "relacion": "Apoya",
+              "localizacion_fuente": "Resultados, apartado 'Isolation and sequence analysis of HpMYB1'; Fig. 7B; accession OQ446482",
+              "cita_textual": null,
+              "limitaciones": "El nombre HpMYB1 procede de este estudio; no debe confundirse con el símbolo clásico R."
+            }
+          ]
+        },
+        {
+          "codigo_estable": "HpMYB1-expresion-v2",
+          "tipo": "Asociacion_fenotipica",
+          "texto": "En 'Royal Velvet', la expresión de HpMYB1 se correlaciona con la acumulación de antocianinas durante el desarrollo del tépalo y es alta en tépalos frente a tejidos sin antocianinas.",
+          "especie_alcance": "Hippeastrum × hybridum 'Royal Velvet'",
+          "contexto": "Cuatro estadios de desarrollo del tépalo y comparación entre tejidos; qRT-PCR y medición de antocianinas",
+          "estado": "Revisado",
+          "revisado_por": "Revisión documental asistida por IA",
+          "fecha_revision": "2026-11-25",
+          "notas_limitaciones": "Correlación en un cultivar y una serie temporal; no establece causalidad ni explica la diversidad de colores.",
+          "evidencias": [
+            {
+              "fuente": "li-2023-hpmyb1",
+              "metodo_evidencia": "Asociacion_molecular",
+              "fuerza": "Media",
+              "relacion": "Apoya",
+              "localizacion_fuente": "Resultados, apartado 'Expression patterns and subcellular localization of HpMYB1'; Fig. 7C",
+              "cita_textual": null,
+              "limitaciones": "Asociación expresión-pigmento en un único cultivar."
+            }
+          ]
+        },
+        {
+          "codigo_estable": "HpMYB1-funcion-heterologa-v2",
+          "tipo": "Funcion",
+          "texto": "La sobreexpresión de HpMYB1 en tabaco aumenta la acumulación de antocianinas y la expresión de genes relacionados con su biosíntesis, apoyando una función activadora de la ruta.",
+          "especie_alcance": "Gen de Hippeastrum × hybridum 'Royal Velvet'; ensayo en Nicotiana tabacum 'NC89'",
+          "contexto": "Transformación estable con CaMV 35S::HpMYB1, tres líneas transgénicas, medición de antocianinas y qRT-PCR",
+          "estado": "Revisado",
+          "revisado_por": "Revisión documental asistida por IA",
+          "fecha_revision": "2026-11-25",
+          "notas_limitaciones": "Evidencia funcional heteróloga. No sustituye una pérdida de función en Hippeastrum ni determina dominancia o epistasis.",
+          "evidencias": [
+            {
+              "fuente": "li-2023-hpmyb1",
+              "metodo_evidencia": "Experimento_directo",
+              "fuerza": "Alta",
+              "relacion": "Apoya",
+              "localizacion_fuente": "Resultados, apartado 'Effects of HpMYB1 overexpression in Tobacco'; Fig. 8A-I, especialmente F-I",
+              "cita_textual": null,
+              "limitaciones": "La sobreexpresión en otra especie demuestra capacidad funcional, no el efecto de variantes naturales de Hippeastrum."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "codigo": "CHS",
+      "nombre_completo": "CHS — familia de chalcona sintasas",
+      "categoria": "Color_estructural",
+      "tipo_entidad": "Gen_molecular",
+      "nombres_alternativos": ["HpCHS2"],
+      "especie_alcance": "Hippeastrum × hybridum 'Royal Velvet'",
+      "resumen": "Se detectaron unigenes CHS con expresión dependiente del estadio. Son candidatos de expresión, no loci alélicos funcionalmente validados.",
+      "estado_curacion": "Revisado",
+      "afirmaciones": [
+        {
+          "codigo_estable": "CHS-expresion-v2",
+          "tipo": "Expresion",
+          "texto": "Se identificaron ocho unigenes CHS; siete mostraron aumento continuo de expresión entre S1 y S4, y siete estaban altamente expresados en tépalos maduros.",
+          "especie_alcance": "Hippeastrum × hybridum 'Royal Velvet'",
+          "contexto": "RNA-seq de tépalos en cuatro estadios; anotación por homología y cuantificación TPM",
+          "estado": "Revisado",
+          "revisado_por": "Revisión documental asistida por IA",
+          "fecha_revision": "2026-11-25",
+          "notas_limitaciones": "No hay validación funcional de cada unigene ni evidencia de que formen alelos de un único locus.",
+          "evidencias": [
+            {
+              "fuente": "li-2023-hpmyb1",
+              "metodo_evidencia": "Asociacion_molecular",
+              "fuerza": "Media",
+              "relacion": "Apoya",
+              "localizacion_fuente": "Resultados, apartado 'The anthocyanin biosynthesis pathway'; Fig. 4; Discusión, 'Floral color and key structural genes'",
+              "cita_textual": null,
+              "limitaciones": "Expresión transcriptómica y anotación funcional por homología; sin ensayo causal específico de CHS."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "codigo": "CHI",
+      "nombre_completo": "CHI — chalcona isomerasa",
+      "categoria": "Color_estructural",
+      "tipo_entidad": "Gen_molecular",
+      "nombres_alternativos": ["HpCHI", "DN2556_c1_g1"],
+      "especie_alcance": "Hippeastrum × hybridum 'Royal Velvet'",
+      "resumen": "Un unigene CHI mostró expresión alta en tépalos maduros. La evidencia es de expresión y anotación, no de caracterización alélica.",
+      "estado_curacion": "Revisado",
+      "afirmaciones": [
+        {
+          "codigo_estable": "CHI-expresion-v2",
+          "tipo": "Expresion",
+          "texto": "El unigene CHI DN2556_c1_g1 presentó expresión alta en tépalos maduros de 'Royal Velvet'.",
+          "especie_alcance": "Hippeastrum × hybridum 'Royal Velvet'",
+          "contexto": "RNA-seq de tépalos en cuatro estadios",
+          "estado": "Revisado",
+          "revisado_por": "Revisión documental asistida por IA",
+          "fecha_revision": "2026-11-25",
+          "notas_limitaciones": "No se demuestra causalidad, variantes alélicas ni herencia de este unigene.",
+          "evidencias": [
+            {
+              "fuente": "li-2023-hpmyb1",
+              "metodo_evidencia": "Asociacion_molecular",
+              "fuerza": "Media",
+              "relacion": "Apoya",
+              "localizacion_fuente": "Fig. 4; Discusión, 'Floral color and key structural genes in the anthocyanin biosynthesis of H. × hybridum Royal Velvet tepals'",
+              "cita_textual": null,
+              "limitaciones": "La anotación CHI se basa en homología de secuencia."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "codigo": "F3H",
+      "nombre_completo": "F3H — familia de flavanona 3-hidroxilasas",
+      "categoria": "Color_estructural",
+      "tipo_entidad": "Gen_molecular",
+      "nombres_alternativos": ["HpF3H"],
+      "especie_alcance": "Hippeastrum × hybridum 'Royal Velvet'",
+      "resumen": "Los unigenes F3H varían entre estadios y todos fueron menos expresados en S4; no se infiere un efecto positivo simple en S4.",
+      "estado_curacion": "Revisado",
+      "afirmaciones": [
+        {
+          "codigo_estable": "F3H-expresion-v2",
+          "tipo": "Expresion",
+          "texto": "Se detectaron unigenes F3H con expresión dependiente del estadio; todos tuvieron menor expresión en S4 que en los otros tres estadios analizados.",
+          "especie_alcance": "Hippeastrum × hybridum 'Royal Velvet'",
+          "contexto": "RNA-seq de tépalos en cuatro estadios",
+          "estado": "Revisado",
+          "revisado_por": "Revisión documental asistida por IA",
+          "fecha_revision": "2026-11-25",
+          "notas_limitaciones": "Este patrón no permite concluir que F3H active o inhiba el color en S4; no hay validación funcional específica.",
+          "evidencias": [
+            {
+              "fuente": "li-2023-hpmyb1",
+              "metodo_evidencia": "Asociacion_molecular",
+              "fuerza": "Media",
+              "relacion": "Apoya",
+              "localizacion_fuente": "Resultados, apartado 'The anthocyanin biosynthesis pathway'; Fig. 4",
+              "cita_textual": null,
+              "limitaciones": "Datos de expresión; la función enzimática se infiere por anotación homóloga."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "codigo": "DFR",
+      "nombre_completo": "DFR — dihidroflavonol 4-reductasa",
+      "categoria": "Color_estructural",
+      "tipo_entidad": "Gen_molecular",
+      "nombres_alternativos": ["HpDFR", "DN8170_c0_g1"],
+      "especie_alcance": "Hippeastrum × hybridum 'Royal Velvet'",
+      "resumen": "Un unigene DFR mostró expresión alta en tépalos maduros. Es un candidato de expresión sin validación alélica o funcional propia.",
+      "estado_curacion": "Revisado",
+      "afirmaciones": [
+        {
+          "codigo_estable": "DFR-expresion-v2",
+          "tipo": "Expresion",
+          "texto": "El unigene DFR DN8170_c0_g1 presentó expresión alta en tépalos maduros de 'Royal Velvet'.",
+          "especie_alcance": "Hippeastrum × hybridum 'Royal Velvet'",
+          "contexto": "RNA-seq de tépalos en cuatro estadios",
+          "estado": "Revisado",
+          "revisado_por": "Revisión documental asistida por IA",
+          "fecha_revision": "2026-11-25",
+          "notas_limitaciones": "La expresión no demuestra que variantes de DFR determinen diferencias de color entre cultivares.",
+          "evidencias": [
+            {
+              "fuente": "li-2023-hpmyb1",
+              "metodo_evidencia": "Asociacion_molecular",
+              "fuerza": "Media",
+              "relacion": "Apoya",
+              "localizacion_fuente": "Fig. 4; Discusión, 'Floral color and key structural genes in the anthocyanin biosynthesis of H. × hybridum Royal Velvet tepals'",
+              "cita_textual": null,
+              "limitaciones": "Anotación por homología y expresión; sin ensayo de pérdida o ganancia de función en Hippeastrum."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "codigo": "ANS",
+      "nombre_completo": "ANS — antocianidina sintasa",
+      "categoria": "Color_estructural",
+      "tipo_entidad": "Gen_molecular",
+      "nombres_alternativos": ["HpANS", "DN5468_c0_g1"],
+      "especie_alcance": "Hippeastrum × hybridum 'Royal Velvet'",
+      "resumen": "Un unigene ANS mostró expresión alta en tépalos maduros; no se han caracterizado sus variantes ni su herencia.",
+      "estado_curacion": "Revisado",
+      "afirmaciones": [
+        {
+          "codigo_estable": "ANS-expresion-v2",
+          "tipo": "Expresion",
+          "texto": "El unigene ANS DN5468_c0_g1 presentó expresión alta en tépalos maduros de 'Royal Velvet'.",
+          "especie_alcance": "Hippeastrum × hybridum 'Royal Velvet'",
+          "contexto": "RNA-seq de tépalos en cuatro estadios",
+          "estado": "Revisado",
+          "revisado_por": "Revisión documental asistida por IA",
+          "fecha_revision": "2026-11-25",
+          "notas_limitaciones": "No se ha establecido una relación causal entre este unigene y el fenotipo de color.",
+          "evidencias": [
+            {
+              "fuente": "li-2023-hpmyb1",
+              "metodo_evidencia": "Asociacion_molecular",
+              "fuerza": "Media",
+              "relacion": "Apoya",
+              "localizacion_fuente": "Fig. 4; Discusión, 'Floral color and key structural genes in the anthocyanin biosynthesis of H. × hybridum Royal Velvet tepals'",
+              "cita_textual": null,
+              "limitaciones": "Expresión y anotación homóloga; sin caracterización funcional en Hippeastrum."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "codigo": "F3pH",
+      "nombre_completo": "F3'H — flavonoide 3'-hidroxilasa",
+      "categoria": "Color_estructural",
+      "tipo_entidad": "Gen_molecular",
+      "nombres_alternativos": ["F3'H", "HpF3'H1", "DN9264_c0_g1"],
+      "especie_alcance": "Hippeastrum × hybridum 'Royal Velvet'",
+      "resumen": "Se predijeron dos unigenes F3'H; uno mostró expresión alta en tépalos maduros. No hay evidencia alélica o funcional específica.",
+      "estado_curacion": "Revisado",
+      "afirmaciones": [
+        {
+          "codigo_estable": "F3pH-expresion-v2",
+          "tipo": "Expresion",
+          "texto": "Se predijeron dos unigenes F3'H y DN9264_c0_g1 presentó expresión alta en tépalos maduros de 'Royal Velvet'.",
+          "especie_alcance": "Hippeastrum × hybridum 'Royal Velvet'",
+          "contexto": "RNA-seq de tépalos en cuatro estadios",
+          "estado": "Revisado",
+          "revisado_por": "Revisión documental asistida por IA",
+          "fecha_revision": "2026-11-25",
+          "notas_limitaciones": "No se puede asignar un pigmento concreto o una variante alélica a partir de esta expresión.",
+          "evidencias": [
+            {
+              "fuente": "li-2023-hpmyb1",
+              "metodo_evidencia": "Asociacion_molecular",
+              "fuerza": "Media",
+              "relacion": "Apoya",
+              "localizacion_fuente": "Resultados, apartado 'The anthocyanin biosynthesis pathway'; Fig. 4; Discusión, 'Floral color and key structural genes'",
+              "cita_textual": null,
+              "limitaciones": "La identificación de F3'H es una predicción por homología; no hay ensayo enzimático o genético específico."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "codigo": "HpbHLH1",
+      "nombre_completo": "HpbHLH1 — candidato bHLH no trazable",
+      "categoria": "Regulador_color",
+      "tipo_entidad": "Gen_molecular",
+      "nombres_alternativos": [],
+      "especie_alcance": "Hippeastrum; identidad molecular no verificada",
+      "resumen": "Nombre heredado del catálogo. No se ha localizado una secuencia o un artículo primario que permita validarlo como cofactor de HpMYB1.",
+      "estado_curacion": "Disputado",
+      "afirmaciones": [
+        {
+          "codigo_estable": "HpbHLH1-limite-identidad-v2",
+          "tipo": "Limitacion",
+          "texto": "No se ha trazado el nombre HpbHLH1 a una secuencia o publicación primaria que demuestre su interacción con HpMYB1 en Hippeastrum.",
+          "especie_alcance": "Hippeastrum; identidad molecular no verificada",
+          "contexto": "Revisión del catálogo histórico y de la fuente molecular disponible",
+          "estado": "Disputado",
+          "revisado_por": null,
+          "fecha_revision": null,
+          "notas_limitaciones": "La existencia de reguladores bHLH en la ruta no identifica automáticamente HpbHLH1 ni demuestra interacción proteína-proteína.",
+          "evidencias": []
+        }
+      ]
+    },
+    {
+      "codigo": "HpUFGT",
+      "nombre_completo": "HpUFGT — UDP-flavonoide glucosiltransferasa candidata",
+      "categoria": "Color_estructural",
+      "tipo_entidad": "Gen_molecular",
+      "nombres_alternativos": ["UFGT", "DN19097_c0_g1"],
+      "especie_alcance": "Hippeastrum × hybridum 'Royal Velvet'",
+      "resumen": "Candidato añadido a partir del transcriptoma de 'Royal Velvet'. Tiene evidencia de expresión, no de función causal o variantes alélicas.",
+      "estado_curacion": "Revisado",
+      "afirmaciones": [
+        {
+          "codigo_estable": "HpUFGT-expresion-v2",
+          "tipo": "Expresion",
+          "texto": "Se identificó un unigene UFGT, DN19097_c0_g1, con expresión alta en tépalos maduros de 'Royal Velvet'.",
+          "especie_alcance": "Hippeastrum × hybridum 'Royal Velvet'",
+          "contexto": "RNA-seq de tépalos en cuatro estadios",
+          "estado": "Revisado",
+          "revisado_por": "Revisión documental asistida por IA",
+          "fecha_revision": "2026-11-25",
+          "notas_limitaciones": "Candidato por anotación homóloga y expresión; no hay validación funcional ni evidencia de herencia.",
+          "evidencias": [
+            {
+              "fuente": "li-2023-hpmyb1",
+              "metodo_evidencia": "Asociacion_molecular",
+              "fuerza": "Media",
+              "relacion": "Apoya",
+              "localizacion_fuente": "Resultados, apartado 'The anthocyanin biosynthesis pathway'; Fig. 4; Discusión, 'Floral color and key structural genes'",
+              "cita_textual": null,
+              "limitaciones": "No confundir el nombre de trabajo HpUFGT con un locus validado o con una enzima ensayada."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

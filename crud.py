@@ -3,9 +3,11 @@ from __future__ import annotations
 import datetime as dt
 import json
 from sqlalchemy import func, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from models import (
+    AfirmacionFuente,
+    AfirmacionReferencia,
     Capsula,
     Cruce,
     Fenotipo,
@@ -95,6 +97,51 @@ def get_locus_by_codigo(session: Session, codigo: str) -> LocusReferencia | None
     return session.execute(select(LocusReferencia).where(LocusReferencia.codigo == codigo)).scalar_one_or_none()
 
 
+def list_referencia_loci(
+    session: Session,
+    q: str | None = None,
+    categoria: str | None = None,
+    estado: str | None = None,
+    tipo_entidad: str | None = None,
+) -> list[LocusReferencia]:
+    stmt = (
+        select(LocusReferencia)
+        .options(
+            selectinload(LocusReferencia.afirmaciones)
+            .selectinload(AfirmacionReferencia.evidencias)
+            .selectinload(AfirmacionFuente.fuente)
+        )
+        .order_by(LocusReferencia.codigo.asc())
+    )
+    if q:
+        like = f"%{q.strip()}%"
+        stmt = stmt.where(
+            func.lower(LocusReferencia.codigo).like(func.lower(like))
+            | func.lower(func.coalesce(LocusReferencia.nombre_completo, "")).like(func.lower(like))
+            | func.lower(func.coalesce(LocusReferencia.resumen, "")).like(func.lower(like))
+        )
+    if categoria:
+        stmt = stmt.where(LocusReferencia.categoria == categoria)
+    if estado:
+        stmt = stmt.where(LocusReferencia.estado_curacion == estado)
+    if tipo_entidad:
+        stmt = stmt.where(LocusReferencia.tipo_entidad == tipo_entidad)
+    return list(session.execute(stmt).scalars().all())
+
+
+def get_locus_referencia(session: Session, locus_id: int) -> LocusReferencia | None:
+    stmt = (
+        select(LocusReferencia)
+        .where(LocusReferencia.id == locus_id)
+        .options(
+            selectinload(LocusReferencia.afirmaciones)
+            .selectinload(AfirmacionReferencia.evidencias)
+            .selectinload(AfirmacionFuente.fuente)
+        )
+    )
+    return session.execute(stmt).scalar_one_or_none()
+
+
 def upsert_genotipo_locus(
     session: Session,
     planta_id: int,
@@ -126,6 +173,34 @@ def list_genotipos_planta(session: Session, planta_id: int) -> list[GenotipoPlan
             select(GenotipoPlanta).where(GenotipoPlanta.planta_id == planta_id).order_by(GenotipoPlanta.locus_id.asc())
         ).scalars().all()
     )
+
+
+def sync_genotipos_planta(session: Session, planta_id: int, entries: list[dict]) -> None:
+    existing = {
+        row.locus_id: row
+        for row in session.execute(select(GenotipoPlanta).where(GenotipoPlanta.planta_id == planta_id)).scalars()
+    }
+    for entry in entries:
+        locus_id = entry["locus_id"]
+        data = entry["datos"]
+        row = existing.get(locus_id)
+        if data is None:
+            if row is not None:
+                session.delete(row)
+            continue
+        if row is None:
+            row = GenotipoPlanta(planta_id=planta_id, locus_id=locus_id, **data)
+            session.add(row)
+        else:
+            previous_alleles = [row.alelo_1, row.alelo_2, row.alelo_3, row.alelo_4]
+            for field, value in data.items():
+                setattr(row, field, value)
+            if previous_alleles == [row.alelo_1, row.alelo_2, row.alelo_3, row.alelo_4] and row.genotipo_display:
+                continue
+        row.genotipo_display = _compute_genotipo_display(row)
+        if not row.fecha_inferencia:
+            row.fecha_inferencia = dt.date.today()
+    session.commit()
 
 
 def create_cruce(session: Session, data: dict) -> Cruce:

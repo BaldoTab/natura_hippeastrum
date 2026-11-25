@@ -150,6 +150,64 @@ class NivelEvidenciaEnum(str, enum.Enum):
     Experimental = "Experimental"
 
 
+class TipoEntidadLocusEnum(str, enum.Enum):
+    Locus_clasico = "Locus_clasico"
+    Gen_molecular = "Gen_molecular"
+    Marcador = "Marcador"
+
+
+class EstadoCuracionEnum(str, enum.Enum):
+    Borrador = "Borrador"
+    Pendiente_revision = "Pendiente_revision"
+    Revisado = "Revisado"
+    Aceptado = "Aceptado"
+    Disputado = "Disputado"
+    Obsoleto = "Obsoleto"
+
+
+class TipoAfirmacionEnum(str, enum.Enum):
+    Identidad = "Identidad"
+    Funcion = "Funcion"
+    Efecto_alelo = "Efecto_alelo"
+    Herencia = "Herencia"
+    Epistasis = "Epistasis"
+    Expresion = "Expresion"
+    Ruta_bioquimica = "Ruta_bioquimica"
+    Asociacion_fenotipica = "Asociacion_fenotipica"
+    Limitacion = "Limitacion"
+
+
+class MetodoEvidenciaEnum(str, enum.Enum):
+    Experimento_directo = "Experimento_directo"
+    Segregacion = "Segregacion"
+    Asociacion_molecular = "Asociacion_molecular"
+    Homologia = "Homologia"
+    Inferencia = "Inferencia"
+    Observacion_local = "Observacion_local"
+    Revision = "Revision"
+
+
+class FuerzaEvidenciaEnum(str, enum.Enum):
+    Alta = "Alta"
+    Media = "Media"
+    Baja = "Baja"
+
+
+class RelacionFuenteEnum(str, enum.Enum):
+    Apoya = "Apoya"
+    Contradice = "Contradice"
+    Contexto = "Contexto"
+
+
+class TipoFuenteEnum(str, enum.Enum):
+    Articulo_primario = "Articulo_primario"
+    Articulo_revision = "Articulo_revision"
+    Base_datos = "Base_datos"
+    Tesis = "Tesis"
+    Libro = "Libro"
+    Observacion_local = "Observacion_local"
+
+
 class PigmentoEnum(str, enum.Enum):
     Pelargonidina = "Pelargonidina"
     Cianidina = "Cianidina"
@@ -291,8 +349,26 @@ class LocusReferencia(Base):
     codigo: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
     nombre_completo: Mapped[str | None] = mapped_column(String(200))
     categoria: Mapped[CategoriaLocusEnum] = mapped_column(Enum(CategoriaLocusEnum), nullable=False)
+    tipo_entidad: Mapped[TipoEntidadLocusEnum] = mapped_column(
+        Enum(TipoEntidadLocusEnum),
+        nullable=False,
+        default=TipoEntidadLocusEnum.Locus_clasico,
+        server_default=TipoEntidadLocusEnum.Locus_clasico.value,
+    )
+    nombres_alternativos: Mapped[str | None] = mapped_column(Text)
+    especie_alcance: Mapped[str] = mapped_column(
+        String(200), nullable=False, default="Hippeastrum", server_default="Hippeastrum"
+    )
+    resumen: Mapped[str | None] = mapped_column(Text)
+    estado_curacion: Mapped[EstadoCuracionEnum] = mapped_column(
+        Enum(EstadoCuracionEnum),
+        nullable=False,
+        default=EstadoCuracionEnum.Pendiente_revision,
+        server_default=EstadoCuracionEnum.Pendiente_revision.value,
+    )
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1, server_default="1")
+    fecha_ultima_revision: Mapped[dt.date | None] = mapped_column(Date)
 
-    # JSON como texto (SQLite)
     alelos_posibles: Mapped[str | None] = mapped_column(Text)
     tipo_herencia: Mapped[TipoHerenciaEnum] = mapped_column(Enum(TipoHerenciaEnum), nullable=False, default=TipoHerenciaEnum.Desconocido)
     interacciona_con: Mapped[str | None] = mapped_column(Text)
@@ -302,6 +378,9 @@ class LocusReferencia(Base):
     notas: Mapped[str | None] = mapped_column(Text)
 
     genotipos_planta: Mapped[list["GenotipoPlanta"]] = relationship("GenotipoPlanta", back_populates="locus", cascade="all, delete-orphan")
+    afirmaciones: Mapped[list["AfirmacionReferencia"]] = relationship(
+        "AfirmacionReferencia", back_populates="locus", cascade="all, delete-orphan"
+    )
 
 
 class GenotipoPlanta(Base):
@@ -332,6 +411,102 @@ class GenotipoPlanta(Base):
     planta: Mapped[Planta] = relationship("Planta", back_populates="genotipos_loci")
     locus: Mapped[LocusReferencia] = relationship("LocusReferencia", back_populates="genotipos_planta")
     inferido_por_cruce: Mapped[Cruce | None] = relationship("Cruce")
+
+
+class FuenteCientifica(Base):
+    __tablename__ = "fuentes_cientificas"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    clave: Mapped[str] = mapped_column(String(120), nullable=False, unique=True)
+    tipo: Mapped[TipoFuenteEnum] = mapped_column(Enum(TipoFuenteEnum), nullable=False)
+    autores: Mapped[str | None] = mapped_column(Text)
+    titulo: Mapped[str] = mapped_column(Text, nullable=False)
+    publicacion: Mapped[str | None] = mapped_column(Text)
+    anio: Mapped[int | None] = mapped_column(Integer, index=True)
+    volumen: Mapped[str | None] = mapped_column(String(50))
+    numero: Mapped[str | None] = mapped_column(String(50))
+    paginas: Mapped[str | None] = mapped_column(String(100))
+    doi: Mapped[str | None] = mapped_column(String(255), unique=True)
+    pmid: Mapped[str | None] = mapped_column(String(50), unique=True)
+    url: Mapped[str | None] = mapped_column(Text)
+    accession: Mapped[str | None] = mapped_column(String(255))
+    fecha_consulta: Mapped[dt.date | None] = mapped_column(Date)
+    notas: Mapped[str | None] = mapped_column(Text)
+
+    @property
+    def cita_completa(self) -> str:
+        partes = [self.autores, self.titulo, self.publicacion]
+        cita = ". ".join(parte.strip() for parte in partes if parte and parte.strip())
+        if self.anio:
+            cita += f" ({self.anio})"
+        if self.volumen:
+            cita += f", {self.volumen}"
+        if self.numero:
+            cita += f"({self.numero})"
+        if self.paginas:
+            cita += f": {self.paginas}"
+        return cita.rstrip(". ") + "."
+
+    @property
+    def identificador_publico(self) -> str | None:
+        if self.doi:
+            return f"DOI: {self.doi}"
+        if self.pmid:
+            return f"PMID: {self.pmid}"
+        if self.accession:
+            return f"Acceso: {self.accession}"
+        return self.url
+
+    evidencias: Mapped[list["AfirmacionFuente"]] = relationship(
+        "AfirmacionFuente", back_populates="fuente", cascade="all, delete-orphan"
+    )
+
+
+class AfirmacionReferencia(Base):
+    __tablename__ = "afirmaciones_referencia"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    locus_id: Mapped[int] = mapped_column(ForeignKey("loci_referencia.id"), nullable=False, index=True)
+    codigo_estable: Mapped[str] = mapped_column(String(120), nullable=False, unique=True)
+    tipo: Mapped[TipoAfirmacionEnum] = mapped_column(Enum(TipoAfirmacionEnum), nullable=False)
+    texto: Mapped[str] = mapped_column(Text, nullable=False)
+    especie_alcance: Mapped[str] = mapped_column(String(200), nullable=False)
+    contexto: Mapped[str | None] = mapped_column(Text)
+    estado: Mapped[EstadoCuracionEnum] = mapped_column(Enum(EstadoCuracionEnum), nullable=False, index=True)
+    version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    revisado_por: Mapped[str | None] = mapped_column(String(200))
+    fecha_revision: Mapped[dt.date | None] = mapped_column(Date)
+    notas_limitaciones: Mapped[str | None] = mapped_column(Text)
+    fecha_creacion: Mapped[dt.datetime] = mapped_column(DateTime, nullable=False, default=dt.datetime.utcnow)
+    fecha_actualizacion: Mapped[dt.datetime] = mapped_column(
+        DateTime, nullable=False, default=dt.datetime.utcnow, onupdate=dt.datetime.utcnow
+    )
+
+    locus: Mapped[LocusReferencia] = relationship("LocusReferencia", back_populates="afirmaciones")
+    evidencias: Mapped[list["AfirmacionFuente"]] = relationship(
+        "AfirmacionFuente", back_populates="afirmacion", cascade="all, delete-orphan"
+    )
+
+
+class AfirmacionFuente(Base):
+    __tablename__ = "afirmaciones_fuente"
+    __table_args__ = (
+        UniqueConstraint("afirmacion_id", "fuente_id", name="uq_afirmaciones_fuente_afirmacion_fuente"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    afirmacion_id: Mapped[int] = mapped_column(ForeignKey("afirmaciones_referencia.id"), nullable=False, index=True)
+    fuente_id: Mapped[int] = mapped_column(ForeignKey("fuentes_cientificas.id"), nullable=False, index=True)
+    metodo_evidencia: Mapped[MetodoEvidenciaEnum] = mapped_column(Enum(MetodoEvidenciaEnum), nullable=False)
+    fuerza: Mapped[FuerzaEvidenciaEnum] = mapped_column(Enum(FuerzaEvidenciaEnum), nullable=False)
+    relacion: Mapped[RelacionFuenteEnum] = mapped_column(Enum(RelacionFuenteEnum), nullable=False)
+    localizacion_fuente: Mapped[str | None] = mapped_column(String(300))
+    cita_textual: Mapped[str | None] = mapped_column(Text)
+    limitaciones: Mapped[str | None] = mapped_column(Text)
+    fecha_creacion: Mapped[dt.datetime] = mapped_column(DateTime, nullable=False, default=dt.datetime.utcnow)
+
+    afirmacion: Mapped[AfirmacionReferencia] = relationship("AfirmacionReferencia", back_populates="evidencias")
+    fuente: Mapped[FuenteCientifica] = relationship("FuenteCientifica", back_populates="evidencias")
 
 
 class EpistasiaObservada(Base):

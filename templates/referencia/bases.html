@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block title %}Bases sobre genética · Referencia genética{% endblock %}
+{% block content %}
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <p class="text-sm text-primary font-medium">Guía para leer la referencia</p>
+      <h1 class="text-2xl font-semibold mt-1">Bases sobre genética</h1>
+      <p class="mt-2 text-sm text-slate-600 max-w-3xl">Una explicación sencilla de los conceptos que aparecen en el catálogo y de los límites de lo que sabemos sobre el color y los patrones de los hippeastrum.</p>
+    </div>
+    <a class="px-3 py-2 border rounded bg-white text-sm" href="/referencia">Volver a la referencia</a>
+  </div>
+
+  <nav class="mt-6 p-4 rounded border bg-white" aria-label="Contenido de esta guía">
+    <div class="font-semibold text-sm">En esta página</div>
+    <div class="mt-2 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+      <a class="text-primary underline" href="#conceptos">Conceptos básicos</a>
+      <a class="text-primary underline" href="#clasicos-moleculares">Símbolos y genes</a>
+      <a class="text-primary underline" href="#hpmyb1">Qué sabemos de HpMYB1</a>
+      <a class="text-primary underline" href="#estados">Estados del catálogo</a>
+      <a class="text-primary underline" href="#como-usarla">Cómo usar la referencia</a>
+    </div>
+  </nav>
+
+  <section id="conceptos" class="mt-8 scroll-mt-6">
+    <h2 class="text-lg font-semibold">Conceptos básicos</h2>
+    <p class="mt-2 text-sm text-slate-600 max-w-4xl">La referencia separa lo que observamos en una flor de la información genética interna y de las pruebas científicas disponibles.</p>
+
+    <div class="mt-4 overflow-x-auto rounded border bg-white">
+      <table class="min-w-full text-sm">
+        <thead class="bg-slate-50 text-left">
+          <tr>
+            <th class="p-3 font-medium">Concepto</th>
+            <th class="p-3 font-medium">Qué significa</th>
+            <th class="p-3 font-medium">Ejemplo en hippeastrum</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y">
+          <tr>
+            <td class="p-3 font-medium">Fenotipo</td>
+            <td class="p-3 text-slate-600">Lo que podemos observar o medir.</td>
+            <td class="p-3 text-slate-600">Color rojo, patrón papilio, flor doble o altura de la vara.</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-medium">Genotipo</td>
+            <td class="p-3 text-slate-600">La información genética interna de la planta.</td>
+            <td class="p-3 text-slate-600">Las variantes concretas que porta en un locus determinado.</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-medium">Locus</td>
+            <td class="p-3 text-slate-600">Una posición concreta del material genético. En catálogos históricos también se usan letras como nombres simbólicos.</td>
+            <td class="p-3 text-slate-600">HpMYB1 es un gen concreto; R es un símbolo clásico cuya identidad molecular no está demostrada.</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-medium">Alelo</td>
+            <td class="p-3 text-slate-600">Una variante de un locus.</td>
+            <td class="p-3 text-slate-600">En un modelo mendeliano sencillo puede haber variantes R y r, pero ese modelo no debe aplicarse a un símbolo disputado sin evidencia.</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-medium">Afirmación</td>
+            <td class="p-3 text-slate-600">Una frase concreta que el catálogo realiza sobre un locus.</td>
+            <td class="p-3 text-slate-600">“La sobreexpresión de HpMYB1 en tabaco aumenta las antocianinas”.</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-medium">Fuente</td>
+            <td class="p-3 text-slate-600">El documento científico que respalda una afirmación.</td>
+            <td class="p-3 text-slate-600">El estudio de Li et al. (2023) sobre HpMYB1.</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-medium">Evidencia</td>
+            <td class="p-3 text-slate-600">La manera en que se obtuvo la información.</td>
+            <td class="p-3 text-slate-600">Experimento directo, asociación molecular, observación o inferencia.</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-medium">Limitaciones</td>
+            <td class="p-3 text-slate-600">Lo que la evidencia no permite concluir.</td>
+            <td class="p-3 text-slate-600">Un experimento en tabaco no demuestra dominancia ni predicción en hippeastrum.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <aside class="mt-4 p-4 rounded border border-blue-200 bg-blue-50 text-sm text-blue-950">
+      <strong>Una comparación útil:</strong> el fenotipo es la fotografía de un pastel y el genotipo es la receta. Ver un pastel rojo no nos dice con certeza todos los ingredientes ni sus cantidades. Del mismo modo, el color de una flor no basta para reconstruir su genotipo.
+    </aside>
+  </section>
+
+  <section id="clasicos-moleculares" class="mt-8 scroll-mt-6">
+    <h2 class="text-lg font-semibold">Símbolos clásicos y genes moleculares</h2>
+    <div class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+      <article class="p-5 rounded border bg-white">
+        <h3 class="font-semibold">Símbolos clásicos: R, Y, W, P y D</h3>
+        <p class="mt-2 text-sm text-slate-600">Son categorías históricas usadas para describir colores, patrones o caracteres morfológicos. Pueden ser útiles para registrar observaciones, pero una letra no demuestra que ya se haya identificado el gen concreto que representa.</p>
+        <p class="mt-3 text-sm text-slate-600">Por eso aparecen como <strong>locus clásico disputado</strong>. No se han borrado, pero tampoco se usan como reglas de predicción.</p>
+      </article>
+      <article class="p-5 rounded border bg-white">
+        <h3 class="font-semibold">Genes moleculares: HpMYB1, CHS, DFR, ANS…</h3>
+        <p class="mt-2 text-sm text-slate-600">Son nombres de genes o candidatos moleculares concretos. Algunos participan en procesos conocidos, como la producción de pigmentos, pero identificar un gen no significa conocer todavía todas sus variantes o su efecto en cada cultivar.</p>
+        <p class="mt-3 text-sm text-slate-600">La referencia indica exactamente qué se ha demostrado y qué queda pendiente.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="hpmyb1" class="mt-8 scroll-mt-6">
+    <h2 class="text-lg font-semibold">Qué sabemos de HpMYB1</h2>
+    <p class="mt-2 text-sm text-slate-600 max-w-4xl">HpMYB1 es el caso mejor documentado del catálogo. El estudio utilizado mostró tres resultados distintos:</p>
+    <ol class="mt-4 space-y-3 text-sm">
+      <li class="p-4 rounded border bg-white"><strong>Identidad:</strong> se clonó y secuenció un gen de <em>Hippeastrum × hybridum</em> ‘Royal Velvet’.</li>
+      <li class="p-4 rounded border bg-white"><strong>Expresión:</strong> su actividad se correlacionó con la acumulación de antocianinas durante el desarrollo de la flor.</li>
+      <li class="p-4 rounded border bg-white"><strong>Función experimental:</strong> al introducir ese gen en tabaco, aumentaron las antocianinas y la actividad de genes relacionados con su producción.</li>
+    </ol>
+
+    <div class="mt-4 p-4 rounded border border-amber-200 bg-amber-50 text-sm text-amber-950">
+      <strong>Lo que eso no demuestra:</strong> no establece que HpMYB1 sea equivalente al símbolo clásico R, que tenga alelos dominantes y recesivos definidos en todos los cultivares ni que permita predecir por sí solo el color de una descendencia.
+    </div>
+
+    <div class="mt-4 p-4 rounded border bg-white text-sm text-slate-600">
+      <strong>CHS, CHI, F3H, DFR, ANS, F3pH y HpUFGT:</strong> el estudio aporta información sobre su expresión. Expresión significa que un gen está activo; no equivale a haber identificado variantes alélicas que expliquen un color. HpUFGT se incluye como candidato molecular, no como una regla de predicción.
+    </div>
+  </section>
+
+  <section id="estados" class="mt-8 scroll-mt-6">
+    <h2 class="text-lg font-semibold">Cómo interpretar los estados</h2>
+    <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+      <article class="p-4 rounded border border-blue-200 bg-blue-50">
+        <h3 class="font-semibold text-blue-900">Revisado</h3>
+        <p class="mt-2 text-blue-950">La fuente y su alcance se han comprobado documentalmente. No significa que exista un consenso absoluto entre expertos.</p>
+      </article>
+      <article class="p-4 rounded border border-red-200 bg-red-50">
+        <h3 class="font-semibold text-red-900">Disputado</h3>
+        <p class="mt-2 text-red-950">La interpretación histórica no está suficientemente respaldada. No debe usarse para inferir genotipos o predecir descendencia.</p>
+      </article>
+      <article class="p-4 rounded border border-amber-200 bg-amber-50">
+        <h3 class="font-semibold text-amber-900">Pendiente de revisión</h3>
+        <p class="mt-2 text-amber-950">La información se conserva para revisarla, pero todavía no se considera validada.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="como-usarla" class="mt-8 scroll-mt-6">
+    <h2 class="text-lg font-semibold">Cómo usar la referencia sin ser genetista</h2>
+    <ol class="mt-4 list-decimal pl-5 space-y-2 text-sm text-slate-700">
+      <li>Empieza por el resumen del locus y comprueba si es un gen molecular o un símbolo clásico.</li>
+      <li>Lee cada afirmación de forma independiente: un locus puede contener información sólida sobre identidad y, al mismo tiempo, carecer de evidencia sobre herencia.</li>
+      <li>Comprueba la fuente, el método y la localización exacta dentro del estudio.</li>
+      <li>Lee siempre las limitaciones antes de utilizar la información.</li>
+      <li>Si no conoces un alelo, regístralo como <span class="mono">?</span>. Una flor roja no justifica escribir automáticamente <span class="mono">RR</span>, ni una blanca <span class="mono">ww</span>.</li>
+    </ol>
+
+    <div class="mt-5 p-4 rounded border bg-slate-50 text-sm">
+      <strong>En resumen:</strong> la referencia no es una calculadora para predecir cruces. Es un catálogo que ayuda a distinguir entre observación, hipótesis y evidencia demostrada.
+    </div>
+  </section>
+
+  <section class="mt-8">
+    <h2 class="text-lg font-semibold">Mini glosario</h2>
+    <dl class="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+      <div class="p-4 rounded border bg-white">
+        <dt class="font-medium">Antocianinas</dt>
+        <dd class="mt-1 text-slate-600">Pigmentos responsables de muchos colores rojos, violáceos y azules.</dd>
+      </div>
+      <div class="p-4 rounded border bg-white">
+        <dt class="font-medium">Tépalos</dt>
+        <dd class="mt-1 text-slate-600">Las piezas que forman la flor y que, en hippeastrum, tienen aspecto de pétalos.</dd>
+      </div>
+      <div class="p-4 rounded border bg-white">
+        <dt class="font-medium">Expresión génica</dt>
+        <dd class="mt-1 text-slate-600">El grado en que un gen está activo y se utiliza para producir su producto funcional.</dd>
+      </div>
+      <div class="p-4 rounded border bg-white">
+        <dt class="font-medium">Experimento heterólogo</dt>
+        <dd class="mt-1 text-slate-600">Un experimento que introduce un gen de una especie en otra, como HpMYB1 de hippeastrum en tabaco.</dd>
+      </div>
+    </dl>
+  </section>
+
+  <div class="mt-8 flex flex-wrap items-center justify-between gap-3 border-t pt-5">
+    <a class="text-sm text-primary underline" href="/referencia">Volver a la referencia genética</a>
+    <a class="px-4 py-2 rounded bg-primary text-white text-sm" href="/plantas/new">Registrar un genotipo</a>
+  </div>
+{% endblock %}

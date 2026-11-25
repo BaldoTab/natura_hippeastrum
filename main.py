@@ -280,6 +280,15 @@ def dashboard(request: Request, db: Session = Depends(get_db)):
         raise
 
 
+@app.get("/cultivo", response_class=HTMLResponse)
+def cultivo(request: Request):
+    return templates.TemplateResponse(
+        request,
+        "cultivo/index.html",
+        {"request": request, "breadcrumbs": _breadcrumbs([("Cultivo", None)])},
+    )
+
+
 @app.get("/plantas", response_class=HTMLResponse)
 def plantas_list(
     request: Request,

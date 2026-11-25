@@ -1,0 +1,321 @@
+{% extends "base.html" %}
+{% block title %}Cultivo{% endblock %}
+{% block content %}
+  <header class="rounded border bg-white p-5 lg:p-7">
+    <div class="max-w-3xl">
+      <div class="text-xs font-semibold uppercase tracking-wide text-primary">Guía práctica</div>
+      <h1 class="mt-1 text-2xl font-semibold lg:text-3xl">Cultivo de Hippeastrum en macetas</h1>
+      <p class="mt-3 text-sm leading-6 text-slate-600">
+        Pautas generales para cultivar, florecer, hibridar y germinar hippeastrums en Valencia.
+        El calendario es orientativo: el microclima de la terraza, la orientación, el tamaño de la maceta
+        y el estado de cada bulbo mandan más que una fecha fija.
+      </p>
+    </div>
+
+    <div class="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
+      <div class="rounded border bg-genF0 p-3">
+        <div class="text-xs text-slate-600">pH orientativo</div>
+        <div class="mt-1 text-lg font-semibold">6,0–6,5</div>
+      </div>
+      <div class="rounded border bg-genF1 p-3">
+        <div class="text-xs text-slate-600">Plantación</div>
+        <div class="mt-1 font-semibold">2/3 del bulbo fuera</div>
+      </div>
+      <div class="rounded border bg-genF2 p-3">
+        <div class="text-xs text-slate-600">Luz</div>
+        <div class="mt-1 font-semibold">Mucha; sol suave</div>
+      </div>
+      <div class="rounded border bg-genF3 p-3">
+        <div class="text-xs text-slate-600">Clave del riego</div>
+        <div class="mt-1 font-semibold">Drenaje, no charcos</div>
+      </div>
+    </div>
+  </header>
+
+  <nav aria-label="Índice de la guía" class="mt-4 rounded border bg-white p-4">
+    <div class="text-sm font-semibold">En esta guía</div>
+    <div class="mt-2 flex flex-wrap gap-x-4 gap-y-2 text-sm">
+      <a class="text-primary hover:underline" href="#valencia">Clima de Valencia</a>
+      <a class="text-primary hover:underline" href="#calendario">Calendario estacional</a>
+      <a class="text-primary hover:underline" href="#macetas">Cultivo en macetas</a>
+      <a class="text-primary hover:underline" href="#trucos">Trucos y problemas</a>
+      <a class="text-primary hover:underline" href="#hibridacion">Hibridación</a>
+      <a class="text-primary hover:underline" href="#germinacion">Germinación</a>
+    </div>
+  </nav>
+
+  <section id="valencia" class="mt-6 scroll-mt-6 rounded border bg-white p-4 lg:p-6">
+    <h2 class="text-xl font-semibold">1. Qué significa cultivar en Valencia</h2>
+    <p class="mt-3 text-sm leading-6 text-slate-700">
+      Valencia tiene un clima mediterráneo de inviernos suaves y veranos calurosos. Los datos normales de
+      AEMET para la estación de la ciudad (periodo 1981–2010) muestran una temperatura media anual de 18,3 °C,
+      máximas medias cercanas a 30 °C en julio y agosto, y mínimas medias de unos 7 °C en enero.
+      La lluvia se concentra sobre todo en otoño: septiembre y octubre rondan los 70–77 mm, frente a unos 8 mm en julio.
+    </p>
+
+    <div class="mt-4 grid md:grid-cols-3 gap-3 text-sm">
+      <div class="rounded border bg-slate-50 p-3">
+        <div class="font-semibold">Invierno</div>
+        <p class="mt-1 leading-6 text-slate-600">Luz abundante y temperaturas generalmente suaves. Las heladas son poco frecuentes en la costa, pero un episodio frío puede dañar hojas y bulbos.</p>
+      </div>
+      <div class="rounded border bg-slate-50 p-3">
+        <div class="font-semibold">Verano</div>
+        <p class="mt-1 leading-6 text-slate-600">Calor, humedad y lluvia escasa. La maceta se seca y se calienta más rápido que un bancal, pero el riego excesivo también puede pudrir el bulbo.</p>
+      </div>
+      <div class="rounded border bg-slate-50 p-3">
+        <div class="font-semibold">Otoño</div>
+        <p class="mt-1 leading-6 text-slate-600">Temperaturas más suaves y lluvias irregulares. Es una buena ventana para retomar el crecimiento, sembrar semilla fresca y preparar el reposo invernal.</p>
+      </div>
+    </div>
+
+    <div class="mt-4 rounded border-l-4 border-accent bg-yellow-50 p-3 text-sm leading-6 text-slate-700">
+      <strong>Consecuencia práctica:</strong> prioriza un sustrato muy aireado, protege del sol de la tarde en julio y agosto,
+      y resguarda las macetas cuando se prevean heladas. En patios interiores o zonas muy reflejadas puede hacer más calor
+      que en la estación meteorológica; en el interior provincial, las mínimas pueden ser más bajas.
+    </div>
+  </section>
+
+  <section id="calendario" class="mt-6 scroll-mt-6 rounded border bg-white p-4 lg:p-6">
+    <h2 class="text-xl font-semibold">2. Calendario aproximado por estaciones</h2>
+    <div class="mt-4 grid md:grid-cols-2 gap-4">
+
+      <article class="rounded border p-4">
+        <div class="flex items-center justify-between gap-3">
+          <h3 class="font-semibold">Invierno</h3>
+          <span class="text-xs text-slate-500">Diciembre–febrero</span>
+        </div>
+        <ul class="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-700">
+          <li>Mantén el bulbo en un lugar muy luminoso; las varas florales se inclinan hacia la luz, así que gira la maceta cada pocos días.</li>
+          <li>Durante la floración, 15–18 °C ayudan a prolongarla. Evita radiadores y corrientes de aire caliente.</li>
+          <li>Riega con moderación si está floreciendo o tiene hojas activas; si está en reposo, espera a que el sustrato esté bastante seco.</li>
+          <li>Protege de heladas y evita que el plato acumule agua. No abones un bulbo inactivo.</li>
+        </ul>
+      </article>
+
+      <article class="rounded border p-4">
+        <div class="flex items-center justify-between gap-3">
+          <h3 class="font-semibold">Primavera</h3>
+          <span class="text-xs text-slate-500">Marzo–mayo</span>
+        </div>
+        <ul class="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-700">
+          <li>Es la principal época de crecimiento de hojas y raíces. Reanuda el riego de forma gradual y empieza a abonar cuando haya crecimiento claro.</li>
+          <li>Tras la floración, retira la vara seca por la base, pero conserva todas las hojas verdes: son las que alimentan la próxima floración.</li>
+          <li>Marzo es un buen momento para trasplantar si las raíces ocupan toda la maceta o si han pasado dos o tres años.</li>
+          <li>Con flores de padres adecuados y temperaturas suaves, es una de las mejores ventanas para hibridar y sembrar semilla fresca.</li>
+        </ul>
+      </article>
+
+      <article class="rounded border p-4">
+        <div class="flex items-center justify-between gap-3">
+          <h3 class="font-semibold">Verano</h3>
+          <span class="text-xs text-slate-500">Junio–agosto</span>
+        </div>
+        <ul class="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-700">
+          <li>Las macetas pueden salir al exterior con luz brillante, pero protege del sol directo de la tarde, especialmente tras un cambio brusco de ubicación.</li>
+          <li>Comprueba la humedad con el dedo: en crecimiento activo, riega cuando los primeros 2–3 cm estén secos. No uses una frecuencia fija.</li>
+          <li>Mantén ventilación entre macetas y revisa el envés de las hojas por ácaros, caracoles y babosas.</li>
+          <li>Si la planta sigue creciendo, continúa un abonado ligero; si entra en reposo por calor, reduce riego y alimentación.</li>
+        </ul>
+      </article>
+
+      <article class="rounded border p-4">
+        <div class="flex items-center justify-between gap-3">
+          <h3 class="font-semibold">Otoño</h3>
+          <span class="text-xs text-slate-500">Septiembre–noviembre</span>
+        </div>
+        <ul class="mt-3 list-disc space-y-2 pl-5 text-sm leading-6 text-slate-700">
+          <li>Al bajar las temperaturas, muchas plantas retoman o mantienen el crecimiento. Ajusta el riego a la lluvia y no dejes el plato lleno.</li>
+          <li>Es una buena época para sembrar semillas recién cosechadas y separar bulbillos con raíz al trasplantar.</li>
+          <li>Si se busca floración invernal, puede ayudar un periodo fresco y luminoso, con reposo progresivo cuando las hojas amarilleen.</li>
+          <li>En Valencia no impongas una sequía total por calendario: si las hojas siguen verdes y la planta activa, necesita agua.</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <section id="macetas" class="mt-6 scroll-mt-6 rounded border bg-white p-4 lg:p-6">
+    <h2 class="text-xl font-semibold">3. Base para un buen cultivo en macetas</h2>
+    <p class="mt-2 text-sm leading-6 text-slate-600">
+      La mayoría de los problemas no vienen de la falta de abono, sino de una maceta sin drenaje,
+      un sustrato que retiene demasiada agua o un bulbo plantado demasiado profundo.
+    </p>
+
+    <div class="mt-4 overflow-x-auto border rounded">
+      <table class="min-w-full text-sm">
+        <thead class="bg-slate-50 text-left">
+          <tr>
+            <th class="p-3">Aspecto</th>
+            <th class="p-3">Recomendación</th>
+            <th class="p-3">Ajuste para Valencia</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y">
+          <tr>
+            <td class="p-3 font-semibold align-top">Maceta</td>
+            <td class="p-3 leading-6 align-top">Una maceta estable, con agujeros de drenaje y solo 2–3 cm más de diámetro que el bulbo. No uses macetas enormes: el exceso de sustrato permanece húmedo.</td>
+            <td class="p-3 leading-6 text-slate-600 align-top">La terracota seca antes que el plástico, pero se calienta más. En exterior, eleva la maceta ligeramente para que el agua salga sin obstáculos.</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-semibold align-top">Sustrato y pH</td>
+            <td class="p-3 leading-6 align-top">Mezcla de partida: 50 % sustrato universal sin turba, 30 % perlita o piedra pumita y 20 % fibra de coco o corteza fina. Objetivo orientativo de pH: 6,0–6,5.</td>
+            <td class="p-3 leading-6 text-slate-600 align-top">Si el sustrato se seca demasiado rápido, aumenta fibra de coco; si permanece húmedo, aumenta perlita o pumita. Evita tierra de jardín, estiércol fresco y sustratos compactados.</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-semibold align-top">Plantación</td>
+            <td class="p-3 leading-6 align-top">Extiende las raíces sin doblarlas y deja aproximadamente los dos tercios superiores del bulbo por encima del sustrato. No entierres el cuello.</td>
+            <td class="p-3 leading-6 text-slate-600 align-top">No añadas una capa de grava en el fondo: no mejora el drenaje y puede dejar una zona saturada justo encima.</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-semibold align-top">Exposición</td>
+            <td class="p-3 leading-6 align-top">Luz muy brillante y algo de sol directo suave. En interior, usa la ventana más luminosa y gira la maceta con regularidad.</td>
+            <td class="p-3 leading-6 text-slate-600 align-top">Sol directo por la mañana; sombra clara al mediodía y por la tarde en julio y agosto. Aclimata gradualmente las plantas que pasan de interior a exterior.</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-semibold align-top">Riego</td>
+            <td class="p-3 leading-6 align-top">En crecimiento activo, riega a fondo cuando los primeros 2–3 cm estén secos, deja que escurra y vacía el plato. No mojes el bulbo ni las flores si puede evitarse.</td>
+            <td class="p-3 leading-6 text-slate-600 align-top">En verano puede hacer falta regar con más frecuencia; en otoño e invierno, menos. La lluvia no siempre humedece toda la maceta y el plato puede anegarla.</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-semibold align-top">Abonado</td>
+            <td class="p-3 leading-6 align-top">Durante el crecimiento de hojas, usa un abono equilibrado. Al aparecer la vara floral, pasa a uno con más potasio que nitrógeno. Aplica cada dos semanas siguiendo la etiqueta.</td>
+            <td class="p-3 leading-6 text-slate-600 align-top">No abones sustrato seco, un bulbo inactivo o una planta enferma. Más dosis no significa más flores y puede dañar raíces y hojas.</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-semibold align-top">Temperatura</td>
+            <td class="p-3 leading-6 align-top">Crecimiento activo: unos 18–27 °C. Floración: 15–18 °C para alargarla. Reposo: alrededor de 12–16 °C si se puede conseguir.</td>
+            <td class="p-3 leading-6 text-slate-600 align-top">Protege por debajo de 5 °C y nunca dejes que la maceta se congele. Una terraza cubierta puede servir de refugio invernal.</td>
+          </tr>
+          <tr>
+            <td class="p-3 font-semibold align-top">Trasplante</td>
+            <td class="p-3 leading-6 align-top">Normalmente cada dos o tres años, preferiblemente después de florecer, entre enero y marzo. Renueva el sustrato y separa los bulbillos que tengan raíces.</td>
+            <td class="p-3 leading-6 text-slate-600 align-top">Trasplanta antes de la llegada del calor intenso y después de la floración, no mientras la vara está abierta.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-4 rounded border bg-genF2 p-4 text-sm leading-6 text-slate-700">
+      <strong>Después de florecer no cortes las hojas verdes.</strong> La vara seca se retira por la base, pero las hojas deben seguir
+      recibiendo luz, agua y nutrición durante meses. Un bulbo bien alimentado después de la floración tiene muchas más posibilidades
+      de volver a florecer al año siguiente.
+    </div>
+  </section>
+
+  <section id="trucos" class="mt-6 scroll-mt-6 rounded border bg-white p-4 lg:p-6">
+    <h2 class="text-xl font-semibold">4. Trucos que marcan la diferencia</h2>
+    <div class="mt-4 grid md:grid-cols-2 gap-x-6 gap-y-3 text-sm leading-6 text-slate-700">
+      <div class="flex gap-3"><span class="font-semibold text-primary">01</span><p><strong>Drenaje antes que frecuencia.</strong> Es mejor regar de forma abundante y dejar escurrir que dar pequeños riegos constantes sobre sustrato compacto.</p></div>
+      <div class="flex gap-3"><span class="font-semibold text-primary">02</span><p><strong>Cuida la posfloración.</strong> Conservar hojas sanas hasta que amarilleen es la mejor inversión para la siguiente floración.</p></div>
+      <div class="flex gap-3"><span class="font-semibold text-primary">03</span><p><strong>Gira y sujeta.</strong> Un cuarto de vuelta cada pocos días evita varas torcidas; un tutor discreto protege las flores grandes.</p></div>
+      <div class="flex gap-3"><span class="font-semibold text-primary">04</span><p><strong>Etiqueta desde el primer día.</strong> Anota madre, padre, fecha y cápsula; la memoria de una temporada de cruces no es fiable.</p></div>
+      <div class="flex gap-3"><span class="font-semibold text-primary">05</span><p><strong>Usa semilla fresca.</strong> Las semillas de Hippeastrum pierden viabilidad al secarse y almacenarse; siémbralas lo antes posible.</p></div>
+      <div class="flex gap-3"><span class="font-semibold text-primary">06</span><p><strong>Multiplica por bulbillos para conservar un cultivar.</strong> Un bulbillo produce una planta genéticamente igual a la madre; una semilla no.</p></div>
+    </div>
+
+    <h3 class="mt-6 font-semibold">Señales rápidas</h3>
+    <div class="mt-3 overflow-x-auto border rounded">
+      <table class="min-w-full text-sm">
+        <thead class="bg-slate-50 text-left">
+          <tr><th class="p-3">Síntoma</th><th class="p-3">Causa probable</th><th class="p-3">Qué hacer</th></tr>
+        </thead>
+        <tbody class="divide-y">
+          <tr><td class="p-3">Bulbo blando, amarillento o con mal olor</td><td class="p-3">Exceso de riego o sustrato mal drenado</td><td class="p-3">Retirar el exceso de humedad, revisar raíces y eliminar tejido podrido; no seguir regando igual.</td></tr>
+          <tr><td class="p-3">Hojas quemadas o manchas secas</td><td class="p-3">Sol directo demasiado intenso, sobre todo tras un cambio brusco</td><td class="p-3">Dar sombra de tarde y aclimatar poco a poco desde interior.</td></tr>
+          <tr><td class="p-3">Muchas hojas pero no hay vara floral</td><td class="p-3">Poca luz, exceso de nitrógeno, bulbo pequeño o reposo insuficiente</td><td class="p-3">Revisar luz, alimentación y posfloración; no forzar con más abono.</td></tr>
+          <tr><td class="p-3">Semillas que no germinan o se pudren</td><td class="p-3">Semilla vieja, siembra profunda, frío o exceso de agua</td><td class="p-3">Usar semilla fresca, sustrato fino y húmedo pero aireado, y mantener 21–25 °C.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="hibridacion" class="mt-6 scroll-mt-6 rounded border bg-white p-4 lg:p-6">
+    <h2 class="text-xl font-semibold">5. Proceso de hibridación</h2>
+    <p class="mt-2 text-sm leading-6 text-slate-600">
+      El objetivo es conseguir semillas con una combinación de caracteres elegida. En Valencia, las ventanas más cómodas suelen ser
+      marzo–mayo y septiembre–octubre, siempre que los parentales tengan flores abiertas y no haya calor extremo ni riesgo de helada.
+    </p>
+
+    <ol class="mt-5 space-y-5 text-sm leading-6 text-slate-700">
+      <li class="flex gap-4">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-white">1</span>
+        <div><strong class="block">Elige y prepara los parentales.</strong> Usa plantas sanas, con flores simultáneas y caracteres complementarios. Anota la madre, el padre y el objetivo del cruce. Como orientación, 2n × 2n y 4n × 4n suelen ser puntos de partida más simples; un cruce 2n × 4n puede producir descendencia 3n y menor fertilidad.</div>
+      </li>
+      <li class="flex gap-4">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-white">2</span>
+        <div><strong class="block">Elimina las anteras de la flor madre.</strong> Antes de que el polen propio se libere, retira los seis estambres con pinzas limpias y sin dañar el pistilo. Si hay riesgo de polen no deseado, protege la flor con una bolsa limpia y ventilada.</div>
+      </li>
+      <li class="flex gap-4">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-white">3</span>
+        <div><strong class="block">Recoge polen del padre.</strong> Cuando las anteras estén maduras y liberen polen, recógelo con un pincel limpio o las propias anteras. Lo ideal es usarlo inmediatamente; si debe guardarse unas horas, hazlo en un recipiente de papel limpio, fresco y seco.</div>
+      </li>
+      <li class="flex gap-4">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-white">4</span>
+        <div><strong class="block">Poliniza y etiqueta.</strong> Deposita el polen sobre el estigma de la madre y repite al día siguiente si es posible. Identifica la flor con madre × padre y fecha. Retira la protección después de la polinización y evita mojar la flor.</div>
+      </li>
+      <li class="flex gap-4">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-white">5</span>
+        <div><strong class="block">Sigue el desarrollo de la cápsula.</strong> Si la fecundación progresa, la base de la flor engorda y forma un fruto. Mantén la planta con luz y riego equilibrados; el tiempo hasta la maduración suele ser de varias semanas y varía con la temperatura y el cruce.</div>
+      </li>
+      <li class="flex gap-4">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-semibold text-white">6</span>
+        <div><strong class="block">Cosecha antes de que se dispersen las semillas.</strong> Corta la cápsula cuando amarillee y empiece a abrirse. Déjala secar en un lugar ventilado y a la sombra, dentro de una bolsa de papel etiquetada. Extrae las semillas carnosas y siémbralas lo antes posible.</div>
+      </li>
+    </ol>
+
+    <div class="mt-5 flex flex-wrap items-center gap-3 rounded border bg-genF1 p-4 text-sm">
+      <div class="flex-1 leading-6 text-slate-700">
+        <strong>Importante:</strong> las plantas procedentes de semilla segregan caracteres y no reproducen exactamente a los padres.
+        Para conservar un cultivar, utiliza bulbilos o clones.
+      </div>
+      <a class="rounded bg-primary px-3 py-2 text-white hover:opacity-90" href="/cruces/new">Registrar un cruce</a>
+    </div>
+  </section>
+
+  <section id="germinacion" class="mt-6 scroll-mt-6 rounded border bg-white p-4 lg:p-6">
+    <h2 class="text-xl font-semibold">6. Germinación y primeros años</h2>
+    <ol class="mt-5 space-y-5 text-sm leading-6 text-slate-700">
+      <li class="flex gap-4">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-white">1</span>
+        <div><strong class="block">Parte de semilla fresca.</strong> No necesita escarificación ni estratificación. Descarta semillas arrugadas, secas o con signos de moho y conserva la etiqueta del cruce.</div>
+      </li>
+      <li class="flex gap-4">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-white">2</span>
+        <div><strong class="block">Siembra en poca profundidad.</strong> Usa una bandeja o maceta con sustrato de semillas fino, limpio y bien drenado. Coloca las semillas separadas y cúbrelas solo con 2–3 mm de sustrato.</div>
+      </li>
+      <li class="flex gap-4">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-white">3</span>
+        <div><strong class="block">Calor suave, humedad y aireación.</strong> Mantén unos 21–25 °C, luz difusa brillante y el sustrato húmedo, nunca encharcado. Una cubierta transparente puede ayudar, pero ventílala a diario para evitar hongos.</div>
+      </li>
+      <li class="flex gap-4">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-white">4</span>
+        <div><strong class="block">Vigila la emergencia.</strong> La germinación suele comenzar en una a tres semanas, aunque puede tardar más. Retira la cubierta gradualmente y evita el sol directo del mediodía sobre las plántulas.</div>
+      </li>
+      <li class="flex gap-4">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-white">5</span>
+        <div><strong class="block">Cultiva sin forzar el reposo.</strong> Cinco o seis semanas después de germinar, inicia un abonado suave. Pasa las plántulas a macetas individuales cuando se puedan manipular y trasplanta a medida que llenen las raíces. Durante el primer año, mantenlas en calor moderado y sin dormancia inducida.</div>
+      </li>
+      <li class="flex gap-4">
+        <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-white">6</span>
+        <div><strong class="block">Ten paciencia y registra.</strong> Una planta de semilla puede tardar entre tres y seis años en florecer, y será distinta de sus padres. En Valencia, sembrar en primavera o principios de otoño ayuda a evitar los extremos del verano; en invierno puede hacerse en interior con calor.</div>
+      </li>
+    </ol>
+
+    <div class="mt-5 rounded border border-green-200 bg-green-50 p-4 text-sm leading-6 text-slate-700">
+      <strong>Bulbilos:</strong> sepáralos al trasplantar cuando tengan sus propias raíces, plántalos con el cuello por encima del sustrato
+      y cultívalos como plantas jóvenes, sin inducir reposo. Suelen florecer antes que las plantas de semilla y conservan el cultivar de origen.
+    </div>
+  </section>
+
+  <section id="fuentes" class="mt-6 rounded border bg-white p-4 lg:p-6">
+    <h2 class="text-lg font-semibold">Fuentes y criterio de esta guía</h2>
+    <ul class="mt-3 space-y-2 text-sm text-slate-700">
+      <li><a class="text-primary hover:underline" href="https://www.rhs.org.uk/plants/hippeastrum/growing-guide" target="_blank" rel="noopener noreferrer">Royal Horticultural Society: guía de cultivo y propagación de Hippeastrum</a>.</li>
+      <li><a class="text-primary hover:underline" href="https://www.aemet.es/es/serviciosclimaticos/datosclimatologicos/valoresclimatologicos?l=8416&amp;k=val" target="_blank" rel="noopener noreferrer">AEMET: valores climatológicos normales de la estación de València, 1981–2010</a>.</li>
+      <li><a class="text-primary hover:underline" href="https://www.visitvalencia.com/planifica-tu-viaje-a-valencia/temperatura" target="_blank" rel="noopener noreferrer">Visit Valencia: carácter general del clima mediterráneo de la ciudad</a>.</li>
+    </ul>
+    <p class="mt-3 text-xs leading-5 text-slate-500">
+      Guía orientativa de cultivo, no un protocolo de laboratorio. Los rangos de pH, temperatura y calendario deben ajustarse
+      al sustrato disponible, a la variedad y a la observación de la planta.
+    </p>
+  </section>
+{% endblock %}

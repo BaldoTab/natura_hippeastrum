@@ -52,7 +52,7 @@
       </div>
     </section>
 
-    <section id="fenotipo" class="p-4 rounded border bg-white">
+    <section id="fenotipo" class="p-4 rounded border bg-white" x-data='{ tipoPatron: {{ (fen.tipo_patron.value if fen.tipo_patron else "")|tojson }} }'>
       <div class="flex items-center justify-between">
         <div class="font-semibold">Fenotipo</div>
         <div class="text-xs text-slate-500">Opcional</div>
@@ -60,7 +60,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-3">
         <input name="fen_color_base" value="{{ fen.color_base or '' }}" class="border rounded px-3 py-2" placeholder="Color base" />
         <div></div>
-        <select name="fen_tipo_patron" class="border rounded px-3 py-2">
+        <select name="fen_tipo_patron" x-model="tipoPatron" class="border rounded px-3 py-2">
           <option value="">Tipo patrón</option>
           {% for tp in tipo_patrones %}
             <option value="{{ tp }}" {% if fen.tipo_patron == tp %}selected{% endif %}>{{ tp }}</option>
@@ -70,12 +70,15 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-3">
         <input name="fen_color_ojo" value="{{ fen.color_ojo or '' }}" class="border rounded px-3 py-2" placeholder="Color ojo" />
         <input name="fen_color_secundario" value="{{ fen.color_secundario or '' }}" class="border rounded px-3 py-2" placeholder="Color secundario" />
-        <select name="fen_patron_papilio" class="border rounded px-3 py-2">
-          <option value="">Papilio</option>
-          {% for pp in papilio_opts %}
-            <option value="{{ pp }}" {% if fen.patron_papilio == pp %}selected{% endif %}>{{ pp }}</option>
-          {% endfor %}
-        </select>
+        <div x-show="tipoPatron === 'Papilio'" {% if not fen.tipo_patron or fen.tipo_patron.value != 'Papilio' %}style="display:none;"{% endif %}>
+          <label for="fen_patron_papilio" class="block text-xs text-slate-500 mb-1">Grado de papilio</label>
+          <select id="fen_patron_papilio" name="fen_patron_papilio" :disabled="tipoPatron !== 'Papilio'" {% if not fen.tipo_patron or fen.tipo_patron.value != 'Papilio' %}disabled{% endif %} class="border rounded px-3 py-2 w-full">
+            <option value="">Sin especificar</option>
+            {% for pp in papilio_opts if pp != 'No' %}
+              <option value="{{ pp }}" {% if fen.patron_papilio == pp %}selected{% endif %}>{{ labels.papilio[pp] }}</option>
+            {% endfor %}
+          </select>
+        </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-3">
@@ -95,10 +98,11 @@
     </section>
 
     <section id="genotipo" class="p-4 rounded border bg-white">
-      <div class="flex items-center justify-between">
-        <div class="font-semibold">Genotipo por locus</div>
+      <div class="flex items-center justify-between gap-3">
+        <div class="font-semibold">Genotipo conocido (opcional)</div>
         <div class="text-xs text-slate-500">Una fila por locus</div>
       </div>
+      <p class="mt-2 text-sm text-slate-600">El fenotipo describe lo que observas, pero no permite deducir el genotipo. Rellena estos campos solo cuando tengas evidencia del alelo o de su inferencia. Consulta las <a class="text-primary underline" href="/referencia/bases">Bases sobre genética</a>.</p>
       <div class="text-xs text-slate-500 mt-2">Usa <span class="mono">?</span> para un alelo desconocido. Una fila nueva requiere un alelo conocido, una fuente o confianza/método distinto de «Desconocido».</div>
 
       {% if loci|length == 0 %}
@@ -141,14 +145,14 @@
                   <td class="p-2">
                     <select name="gl_{{ locus.id }}_confianza" class="border rounded px-2 py-1">
                       {% for c in confianzas %}
-                        <option value="{{ c }}" {% if (g and g.confianza == c) or (not g and c == 'Desconocido') %}selected{% endif %}>{{ c }}</option>
+                        <option value="{{ c }}" {% if (g and g.confianza == c) or (not g and c == 'Desconocido') %}selected{% endif %}>{{ labels.confianzas[c] }}</option>
                       {% endfor %}
                     </select>
                   </td>
                   <td class="p-2">
                     <select name="gl_{{ locus.id }}_metodo" class="border rounded px-2 py-1">
                       {% for m in metodos %}
-                        <option value="{{ m }}" {% if (g and g.metodo_inferencia == m) or (not g and m == 'Desconocido') %}selected{% endif %}>{{ m }}</option>
+                        <option value="{{ m }}" {% if (g and g.metodo_inferencia == m) or (not g and m == 'Desconocido') %}selected{% endif %}>{{ labels.metodos[m] }}</option>
                       {% endfor %}
                     </select>
                   </td>

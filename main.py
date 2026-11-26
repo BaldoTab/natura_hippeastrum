@@ -374,6 +374,7 @@ def plantas_new(request: Request, db: Session = Depends(get_db)):
             "papilio_opts": [pp.value for pp in PapilioEnum],
             "confianzas": [c.value for c in ConfianzaGenotipoEnum],
             "metodos": [m.value for m in MetodoInferenciaEnum],
+            "labels": _plant_labels(),
         },
     )
 
@@ -406,6 +407,12 @@ async def plantas_new_post(
     fen_color_hojas: str | None = Form(default=None),
     db: Session = Depends(get_db),
 ):
+    fen_patron_papilio = (
+        fen_patron_papilio
+        if fen_tipo_patron == TipoPatronEnum.Papilio.value
+        and fen_patron_papilio in {PapilioEnum.Si.value, PapilioEnum.Parcial.value}
+        else None
+    )
     genotipos = await _parse_genotipos_form(request, db, {})
     planta = crud.create_planta(
         db,
@@ -487,6 +494,7 @@ def plantas_detail(planta_id: int, request: Request, db: Session = Depends(get_d
             "fotos": fotos,
             "foto_principal": foto_principal,
             "etapas": [e.value for e in EtapaFotoEnum],
+            "labels": _plant_labels(),
         },
     )
 
@@ -521,6 +529,7 @@ def plantas_edit(planta_id: int, request: Request, db: Session = Depends(get_db)
             "papilio_opts": [pp.value for pp in PapilioEnum],
             "confianzas": [c.value for c in ConfianzaGenotipoEnum],
             "metodos": [m.value for m in MetodoInferenciaEnum],
+            "labels": _plant_labels(),
         },
     )
 
@@ -558,6 +567,12 @@ async def plantas_edit_post(
     if not planta:
         return RedirectResponse(url="/plantas", status_code=303)
 
+    fen_patron_papilio = (
+        fen_patron_papilio
+        if fen_tipo_patron == TipoPatronEnum.Papilio.value
+        and fen_patron_papilio in {PapilioEnum.Si.value, PapilioEnum.Parcial.value}
+        else None
+    )
     existing = {row.locus_id: row for row in crud.list_genotipos_planta(db, planta_id)}
     genotipos = await _parse_genotipos_form(request, db, existing)
     crud.update_planta(
@@ -878,6 +893,32 @@ def predictor(request: Request):
         "predictor/index.html",
         {"request": request, "breadcrumbs": _breadcrumbs([("Predictor", None)])},
     )
+
+
+def _plant_labels() -> dict:
+    return {
+        "confianzas": {
+            ConfianzaGenotipoEnum.Confirmado_lab.value: "Confirmado en laboratorio",
+            ConfianzaGenotipoEnum.Alta_observacion.value: "Alta por observación",
+            ConfianzaGenotipoEnum.Media_inferido.value: "Media por inferencia",
+            ConfianzaGenotipoEnum.Baja_visual.value: "Baja por observación visual",
+            ConfianzaGenotipoEnum.Desconocido.value: "Desconocida",
+        },
+        "metodos": {
+            MetodoInferenciaEnum.Citometria_flujo.value: "Citometría de flujo",
+            MetodoInferenciaEnum.Observacion_fenotipo.value: "Observación del fenotipo",
+            MetodoInferenciaEnum.Resultado_cruce_F1.value: "Resultado de cruce F1",
+            MetodoInferenciaEnum.Segregacion_F2.value: "Segregación F2",
+            MetodoInferenciaEnum.Chi_cuadrado.value: "Chi-cuadrado",
+            MetodoInferenciaEnum.Comparacion_parental.value: "Comparación parental",
+            MetodoInferenciaEnum.Desconocido.value: "Desconocido",
+        },
+        "papilio": {
+            PapilioEnum.Si.value: "Sí",
+            PapilioEnum.No.value: "No",
+            PapilioEnum.Parcial.value: "Parcial",
+        },
+    }
 
 
 def _reference_labels() -> dict:

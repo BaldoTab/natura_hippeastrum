@@ -75,7 +75,7 @@
             <div><span class="text-slate-500">Color base:</span> {{ fenotipo.color_base or '—' }}</div>
             <div></div>
             <div><span class="text-slate-500">Patrón:</span> {{ fenotipo.tipo_patron.value if fenotipo.tipo_patron else '—' }}</div>
-            <div><span class="text-slate-500">Papilio:</span> {{ fenotipo.patron_papilio or '—' }}</div>
+            <div><span class="text-slate-500">Papilio:</span> {{ labels.papilio[fenotipo.patron_papilio.value] if fenotipo.patron_papilio else '—' }}</div>
             <div><span class="text-slate-500">Flor doble:</span> {{ 'Sí' if fenotipo.flor_doble else 'No' }}</div>
             <div><span class="text-slate-500">Altura vara floral:</span> {{ fenotipo.altura_vara_floral_cm or '—' }} cm</div>
             <div><span class="text-slate-500">Longitud flor:</span> {{ fenotipo.longitud_flor_cm or '—' }} cm</div>
@@ -98,7 +98,7 @@
               <div class="flex items-center justify-between border rounded p-2 text-sm">
                 <div>
                   <div class="mono font-semibold">{{ g.locus.codigo }}</div>
-                  <div class="text-xs text-slate-500">{{ g.metodo_inferencia }} · {{ g.confianza }}</div>
+                  <div class="text-xs text-slate-500">{{ labels.metodos[g.metodo_inferencia.value] }} · {{ labels.confianzas[g.confianza.value] }}</div>
                 </div>
                 <div class="mono">{{ g.genotipo_display or (g.alelo_1 ~ '/' ~ g.alelo_2) }}</div>
               </div>

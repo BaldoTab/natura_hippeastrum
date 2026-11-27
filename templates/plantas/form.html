@@ -52,6 +52,53 @@
       </div>
     </section>
 
+    <section id="genealogia" class="p-4 rounded border bg-white" x-data='{ cruceOrigen: {{ (form.id_cruce_origen or "")|tojson }} }'>
+      <div class="flex items-center justify-between gap-3">
+        <div class="font-semibold">Genealogía</div>
+        <div class="text-xs text-slate-500">Opcional</div>
+      </div>
+      <p class="mt-2 text-sm text-slate-600">Registra solo parentescos que conozcas. Si eliges un cruce de origen, sus plantas progenitoras se guardarán automáticamente.</p>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-3">
+        <div>
+          <label for="id_madre" class="block text-xs text-slate-500 mb-1">Madre</label>
+          <select id="id_madre" name="id_madre" :disabled="!!cruceOrigen" class="border rounded px-3 py-2 w-full disabled:bg-slate-100">
+            <option value="">Sin especificar</option>
+            {% for p in plantas %}
+              <option value="{{ p.id }}" {% if form.id_madre == p.id %}selected{% endif %}>{{ p.codigo }} · {{ p.nombre_cultivar or '—' }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="id_padre" class="block text-xs text-slate-500 mb-1">Padre</label>
+          <select id="id_padre" name="id_padre" :disabled="!!cruceOrigen" class="border rounded px-3 py-2 w-full disabled:bg-slate-100">
+            <option value="">Sin especificar</option>
+            {% for p in plantas %}
+              <option value="{{ p.id }}" {% if form.id_padre == p.id %}selected{% endif %}>{{ p.codigo }} · {{ p.nombre_cultivar or '—' }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="id_cruce_origen" class="block text-xs text-slate-500 mb-1">Cruce de origen</label>
+          <select id="id_cruce_origen" name="id_cruce_origen" x-model="cruceOrigen" class="border rounded px-3 py-2 w-full">
+            <option value="">Sin cruce registrado</option>
+            {% for c in cruces %}
+              <option value="{{ c.id }}" {% if form.id_cruce_origen == c.id %}selected{% endif %}>{{ c.codigo }} · {{ c.madre.codigo }} × {{ c.padre.codigo }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>
+          <label for="es_clon_de" class="block text-xs text-slate-500 mb-1">Clon de</label>
+          <select id="es_clon_de" name="es_clon_de" class="border rounded px-3 py-2 w-full">
+            <option value="">No es un clon</option>
+            {% for p in plantas %}
+              <option value="{{ p.id }}" {% if form.es_clon_de == p.id %}selected{% endif %}>{{ p.codigo }} · {{ p.nombre_cultivar or '—' }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="mt-3 text-xs text-slate-500">Un clon comparte material genético con la planta de origen; se muestra como clon, no como hijo de un cruce. Si madre y padre son la misma planta, se registra una autopolinización.</div>
+    </section>
+
     <section id="fenotipo" class="p-4 rounded border bg-white" x-data='{ tipoPatron: {{ (fen.tipo_patron.value if fen.tipo_patron else "")|tojson }} }'>
       <div class="flex items-center justify-between">
         <div class="font-semibold">Fenotipo</div>

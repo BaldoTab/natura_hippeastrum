@@ -260,13 +260,65 @@ async def _parse_genotipos_form(request: Request, db: Session, existing: dict[in
     return entries
 
 
+def _resolve_genealogy(
+    db: Session,
+    planta_id: int | None,
+    id_madre: int | None,
+    id_padre: int | None,
+    id_cruce_origen: int | None,
+    es_clon_de: int | None,
+) -> dict:
+    if es_clon_de:
+        id_madre = None
+        id_padre = None
+        id_cruce_origen = None
+    elif id_cruce_origen:
+        cruce = db.get(Cruce, id_cruce_origen)
+        if cruce is None:
+            raise HTTPException(status_code=400, detail="El cruce de origen seleccionado no existe.")
+        if planta_id in {cruce.planta_madre_id, cruce.planta_padre_id}:
+            raise HTTPException(status_code=400, detail="Una planta no puede ser descendiente de un cruce del que forma parte como progenitor.")
+        id_madre = cruce.planta_madre_id
+        id_padre = cruce.planta_padre_id
+
+    for label, parent_id in (("madre", id_madre), ("padre", id_padre), ("planta de origen del clon", es_clon_de)):
+        if parent_id is not None and db.get(Planta, parent_id) is None:
+            raise HTTPException(status_code=400, detail=f"La {label} seleccionada no existe.")
+
+    if planta_id is not None:
+        if planta_id in {id_madre, id_padre, es_clon_de}:
+            raise HTTPException(status_code=400, detail="Una planta no puede ser su propio progenitor o su propio origen de clonación.")
+        reachable = crud.genealogy_reachable_plants(db, "p", planta_id)
+        targets = {parent_id for parent_id in (id_madre, id_padre, es_clon_de) if parent_id is not None}
+        if targets & reachable:
+            raise HTTPException(status_code=400, detail="La relación propuesta crea un ciclo en el árbol genealógico.")
+
+    return {
+        "id_madre": id_madre,
+        "id_padre": id_padre,
+        "id_cruce_origen": id_cruce_origen,
+        "es_clon_de": es_clon_de,
+    }
+
+
+def _validate_cruce_parents(db: Session, cruce_id: int | None, planta_madre_id: int, planta_padre_id: int) -> None:
+    if db.get(Planta, planta_madre_id) is None or db.get(Planta, planta_padre_id) is None:
+        raise HTTPException(status_code=400, detail="Los parentales del cruce deben ser plantas existentes.")
+    if cruce_id is not None:
+        reachable = crud.genealogy_reachable_plants(db, "c", cruce_id)
+        if planta_madre_id in reachable or planta_padre_id in reachable:
+            raise HTTPException(status_code=400, detail="Los parentales propuestos crean un ciclo genealógico con la descendencia del cruce.")
+
+
 def _plant_thumb(session: Session, planta_id: int) -> str | None:
     f = session.execute(
         select(Foto).where(Foto.planta_id == planta_id).order_by(Foto.es_foto_principal.desc(), Foto.id.desc()).limit(1)
     ).scalar_one_or_none()
     if not f:
         return None
-    return f.thumbnail_filename
+    if f.thumbnail_filename:
+        return f"/static/thumbnails/{f.thumbnail_filename}"
+    return f"/static/photos/{f.filename}"
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -289,7 +341,7 @@ def dashboard(request: Request, db: Session = Depends(get_db)):
 
         plantas_recientes = db.execute(select(Planta).order_by(Planta.fecha_creacion.desc()).limit(8)).scalars().all()
         for p in plantas_recientes:
-            setattr(p, "_thumb", _plant_thumb(db, p.id))
+            setattr(p, "foto_principal_thumb", _plant_thumb(db, p.id))
 
         gen_labels = [g.value for g in GeneracionEnum]
         gen_values = [gen_counts.get(g, 0) for g in gen_labels]
@@ -333,7 +385,7 @@ def plantas_list(
 ):
     plantas = crud.list_plantas(db, generacion=generacion, estado=estado, ploidy=ploidy, q=q)
     for p in plantas:
-        setattr(p, "_thumb", _plant_thumb(db, p.id))
+        setattr(p, "foto_principal_thumb", _plant_thumb(db, p.id))
 
     return templates.TemplateResponse(
         request,
@@ -367,6 +419,8 @@ def plantas_new(request: Request, db: Session = Depends(get_db)):
             "fen": {},
             "loci": crud.list_loci_referencia(db),
             "gen_by_locus": {},
+            "plantas": crud.list_plantas(db),
+            "cruces": crud.list_cruces(db),
             "generaciones": [g.value for g in GeneracionEnum],
             "estados": [e.value for e in EstadoPlantaEnum],
             "ploidies": [p.value for p in PloidyEnum],
@@ -395,6 +449,10 @@ async def plantas_new_post(
     fecha_primera_floracion: str | None = Form(default=None),
     num_ejemplares_fisicos: int = Form(default=1),
     notas: str | None = Form(default=None),
+    id_madre: int | None = Form(default=None),
+    id_padre: int | None = Form(default=None),
+    id_cruce_origen: int | None = Form(default=None),
+    es_clon_de: int | None = Form(default=None),
     fen_color_base: str | None = Form(default=None),
     fen_tipo_patron: str | None = Form(default=None),
     fen_color_ojo: str | None = Form(default=None),
@@ -414,6 +472,7 @@ async def plantas_new_post(
         else None
     )
     genotipos = await _parse_genotipos_form(request, db, {})
+    genealogia = _resolve_genealogy(db, None, id_madre, id_padre, id_cruce_origen, es_clon_de)
     planta = crud.create_planta(
         db,
         {
@@ -430,6 +489,7 @@ async def plantas_new_post(
             "fecha_primera_floracion": _parse_date(fecha_primera_floracion),
             "num_ejemplares_fisicos": num_ejemplares_fisicos,
             "notas": notas,
+            **genealogia,
         },
     )
 
@@ -487,6 +547,7 @@ def plantas_detail(planta_id: int, request: Request, db: Session = Depends(get_d
             "request": request,
             "breadcrumbs": _breadcrumbs([("Plantas", "/plantas"), (planta.codigo, None)]),
             "planta": planta,
+            "familia": crud.get_planta_familia(db, planta_id),
             "fenotipo": fenotipo,
             "loci": loci,
             "genotipos": genotipos,
@@ -522,6 +583,8 @@ def plantas_edit(planta_id: int, request: Request, db: Session = Depends(get_db)
             "fen": fen,
             "loci": loci,
             "gen_by_locus": gen_by_locus,
+            "plantas": [p for p in crud.list_plantas(db) if p.id != planta_id],
+            "cruces": [c for c in crud.list_cruces(db) if planta_id not in {c.planta_madre_id, c.planta_padre_id}],
             "generaciones": [g.value for g in GeneracionEnum],
             "estados": [e.value for e in EstadoPlantaEnum],
             "ploidies": [p.value for p in PloidyEnum],
@@ -551,6 +614,10 @@ async def plantas_edit_post(
     fecha_primera_floracion: str | None = Form(default=None),
     num_ejemplares_fisicos: int = Form(default=1),
     notas: str | None = Form(default=None),
+    id_madre: int | None = Form(default=None),
+    id_padre: int | None = Form(default=None),
+    id_cruce_origen: int | None = Form(default=None),
+    es_clon_de: int | None = Form(default=None),
     fen_color_base: str | None = Form(default=None),
     fen_tipo_patron: str | None = Form(default=None),
     fen_color_ojo: str | None = Form(default=None),
@@ -575,6 +642,7 @@ async def plantas_edit_post(
     )
     existing = {row.locus_id: row for row in crud.list_genotipos_planta(db, planta_id)}
     genotipos = await _parse_genotipos_form(request, db, existing)
+    genealogia = _resolve_genealogy(db, planta_id, id_madre, id_padre, id_cruce_origen, es_clon_de)
     crud.update_planta(
         db,
         planta,
@@ -592,6 +660,7 @@ async def plantas_edit_post(
             "fecha_primera_floracion": _parse_date(fecha_primera_floracion),
             "num_ejemplares_fisicos": num_ejemplares_fisicos,
             "notas": notas,
+            **genealogia,
         },
     )
 
@@ -720,6 +789,7 @@ def cruces_new_post(
     notas: str | None = Form(default=None),
     db: Session = Depends(get_db),
 ):
+    _validate_cruce_parents(db, None, planta_madre_id, planta_padre_id)
     cruce = crud.create_cruce(
         db,
         {
@@ -746,6 +816,9 @@ def cruces_detail(cruce_id: int, request: Request, db: Session = Depends(get_db)
         return RedirectResponse(url="/cruces", status_code=303)
 
     capsulas = db.execute(select(Capsula).where(Capsula.cruce_id == cruce_id).order_by(Capsula.numero_capsula.asc())).scalars().all()
+    plantas_descendientes = db.execute(
+        select(Planta).where(Planta.id_cruce_origen == cruce_id).order_by(Planta.codigo.asc())
+    ).scalars().all()
     return templates.TemplateResponse(
         request,
         "cruces/detail.html",
@@ -754,6 +827,7 @@ def cruces_detail(cruce_id: int, request: Request, db: Session = Depends(get_db)
             "breadcrumbs": _breadcrumbs([("Cruces", "/cruces"), (cruce.codigo, None)]),
             "cruce": cruce,
             "capsulas": capsulas,
+            "plantas_descendientes": plantas_descendientes,
             "estados_capsula": [e.value for e in EstadoCapsulaEnum],
         },
     )
@@ -800,6 +874,7 @@ def cruces_edit_post(
     if not cruce:
         return RedirectResponse(url="/cruces", status_code=303)
 
+    _validate_cruce_parents(db, cruce_id, planta_madre_id, planta_padre_id)
     crud.update_cruce(
         db,
         cruce,
@@ -878,11 +953,32 @@ def galeria(request: Request, db: Session = Depends(get_db)):
 
 
 @app.get("/arbol", response_class=HTMLResponse)
-def arbol(request: Request):
+def arbol(request: Request, planta_id: int | None = None, db: Session = Depends(get_db)):
+    plantas = crud.list_plantas(db)
+    selected = db.get(Planta, planta_id) if planta_id is not None else None
+    if selected is None and plantas:
+        related_ids = {
+            entity_id
+            for cruce in crud.list_cruces(db)
+            for entity_id in (cruce.planta_madre_id, cruce.planta_padre_id)
+        }
+        related_ids.update(
+            planta.id
+            for planta in plantas
+            if planta.id_cruce_origen or planta.id_madre or planta.id_padre or planta.es_clon_de
+        )
+        selected = next((planta for planta in plantas if planta.id in related_ids), plantas[0])
+    graph = crud.get_genealogy_graph(db, selected.id) if selected else {"nodes": [], "links": [], "selected": ""}
     return templates.TemplateResponse(
         request,
         "arbol/index.html",
-        {"request": request, "breadcrumbs": _breadcrumbs([("Árbol", None)])},
+        {
+            "request": request,
+            "breadcrumbs": _breadcrumbs([("Árbol", None)]),
+            "plantas": plantas,
+            "selected": selected,
+            "graph": graph,
+        },
     )
 
 

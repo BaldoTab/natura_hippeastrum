@@ -38,7 +38,10 @@
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-6">
       {% for p in plantas %}
         <a href="/plantas/{{ p.id }}" class="block border rounded bg-white p-3 hover:bg-slate-50">
-          <div class="flex items-center justify-between">
+          {% if p.foto_principal_thumb %}
+            <img src="{{ p.foto_principal_thumb }}" alt="Portada de {{ p.codigo }}" class="w-full h-28 object-cover rounded" />
+          {% endif %}
+          <div class="flex items-center justify-between{% if p.foto_principal_thumb %} mt-3{% endif %}">
             <div class="mono font-semibold">{{ p.codigo }}</div>
             <div class="text-xs px-2 py-0.5 rounded border">{{ p.generacion.value if p.generacion else '' }}</div>
           </div>

@@ -26,13 +26,6 @@
         <div class="text-sm">{{ planta.ubicacion or '—' }}</div>
       </div>
 
-      {% if planta.es_clon_de %}
-        <div class="mt-3 p-3 border rounded bg-slate-50">
-          <div class="text-xs text-slate-500">Clon de</div>
-          <div class="text-sm mono">HP-{{ planta.es_clon_de }}</div>
-        </div>
-      {% endif %}
-
       <div class="mt-4">
         <div class="font-semibold">Subir foto</div>
         <form class="mt-2 space-y-2" method="post" action="/photos/upload" enctype="multipart/form-data">
@@ -63,6 +56,84 @@
           <div><span class="text-slate-500">Fecha semilla:</span> {{ planta.fecha_semilla or '—' }}</div>
           <div><span class="text-slate-500">1ª floración:</span> {{ planta.fecha_primera_floracion or '—' }}</div>
         </div>
+      </div>
+
+      <div id="genealogia" class="p-4 rounded border bg-white">
+        <div class="flex items-center justify-between gap-3">
+          <div class="font-semibold">Genealogía</div>
+          <div class="flex items-center gap-3 text-sm">
+            <a class="text-primary" href="/arbol?planta_id={{ planta.id }}">Ver árbol</a>
+            <a class="text-primary" href="/plantas/{{ planta.id }}/edit#genealogia">Editar</a>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-3 text-sm">
+          <div class="border rounded p-3">
+            <div class="text-xs text-slate-500 mb-2">Progenitores</div>
+            <div>Madre: {% if familia.madre %}<a class="mono text-primary" href="/plantas/{{ familia.madre.id }}">{{ familia.madre.codigo }}</a>{% else %}—{% endif %}</div>
+            <div>Padre: {% if familia.padre %}<a class="mono text-primary" href="/plantas/{{ familia.padre.id }}">{{ familia.padre.codigo }}</a>{% else %}—{% endif %}</div>
+            {% if familia.madre and familia.padre and familia.madre.id == familia.padre.id %}
+              <div class="text-xs text-slate-500 mt-1">Autopolinización</div>
+            {% endif %}
+            <div class="mt-1">Cruce de origen: {% if familia.cruce_origen %}<a class="mono text-primary" href="/cruces/{{ familia.cruce_origen.id }}">{{ familia.cruce_origen.codigo }}</a>{% else %}—{% endif %}</div>
+          </div>
+          <div class="border rounded p-3">
+            <div class="text-xs text-slate-500 mb-2">Clonación</div>
+            {% if familia.clone_de %}
+              <div>Clon de <a class="mono text-primary" href="/plantas/{{ familia.clone_de.id }}">{{ familia.clone_de.codigo }}</a></div>
+            {% else %}
+              <div class="text-slate-500">No registrada como clon.</div>
+            {% endif %}
+            {% if familia.clones|length > 0 %}
+              <div class="mt-2">Clones registrados:</div>
+              <div class="flex flex-wrap gap-2 mt-1">
+                {% for clon in familia.clones %}
+                  <a class="mono text-primary" href="/plantas/{{ clon.id }}">{{ clon.codigo }}</a>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-3 mt-3 text-sm">
+          <div class="border rounded p-3">
+            <div class="text-xs text-slate-500 mb-2">Hermanos ({{ familia.hermanos|length }})</div>
+            {% if familia.hermanos|length == 0 %}
+              <div class="text-slate-500">Sin hermanos registrados.</div>
+            {% else %}
+              <div class="flex flex-wrap gap-2">
+                {% for hermano in familia.hermanos %}
+                  <a class="mono text-primary" href="/plantas/{{ hermano.id }}">{{ hermano.codigo }}</a>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+          <div class="border rounded p-3">
+            <div class="text-xs text-slate-500 mb-2">Descendientes directos ({{ familia.hijos|length }})</div>
+            {% if familia.hijos|length == 0 %}
+              <div class="text-slate-500">Sin descendientes registrados.</div>
+            {% else %}
+              <div class="flex flex-wrap gap-2">
+                {% for hijo in familia.hijos %}
+                  <a class="mono text-primary" href="/plantas/{{ hijo.id }}">{{ hijo.codigo }}</a>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+          <div class="border rounded p-3">
+            <div class="text-xs text-slate-500 mb-2">Cruces como progenitor ({{ familia.cruces_progenitor|length }})</div>
+            {% if familia.cruces_progenitor|length == 0 %}
+              <div class="text-slate-500">Sin cruces registrados.</div>
+            {% else %}
+              <div class="flex flex-wrap gap-2">
+                {% for cruce in familia.cruces_progenitor %}
+                  <a class="mono text-primary" href="/cruces/{{ cruce.id }}">{{ cruce.codigo }}</a>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="mt-3 text-xs text-slate-500">La genealogía refleja únicamente las relaciones registradas; no deduce genotipos ni parentescos a partir del fenotipo.</div>
       </div>
 
       <div class="p-4 rounded border bg-white">

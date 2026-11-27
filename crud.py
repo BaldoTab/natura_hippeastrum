@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session, selectinload
 
 from models import (
@@ -74,6 +74,168 @@ def list_plantas(
 
 def get_planta(session: Session, planta_id: int) -> Planta | None:
     return session.get(Planta, planta_id)
+
+
+def get_planta_familia(session: Session, planta_id: int) -> dict:
+    planta = get_planta(session, planta_id)
+    if planta is None:
+        return {}
+
+    madre = session.get(Planta, planta.id_madre) if planta.id_madre else None
+    padre = session.get(Planta, planta.id_padre) if planta.id_padre else None
+    cruce_origen = session.get(Cruce, planta.id_cruce_origen) if planta.id_cruce_origen else None
+    clone_de = session.get(Planta, planta.es_clon_de) if planta.es_clon_de else None
+
+    hijos = list(
+        session.execute(
+            select(Planta)
+            .where(
+                Planta.id != planta_id,
+                or_(Planta.id_madre == planta_id, Planta.id_padre == planta_id),
+            )
+            .order_by(Planta.codigo.asc())
+        ).scalars()
+    )
+
+    parent_ids = {parent_id for parent_id in (planta.id_madre, planta.id_padre) if parent_id}
+    hermanos = []
+    if parent_ids:
+        hermanos = list(
+            session.execute(
+                select(Planta)
+                .where(
+                    Planta.id != planta_id,
+                    or_(Planta.id_madre.in_(parent_ids), Planta.id_padre.in_(parent_ids)),
+                )
+                .order_by(Planta.codigo.asc())
+            ).scalars()
+        )
+
+    clones = list(
+        session.execute(
+            select(Planta).where(Planta.es_clon_de == planta_id).order_by(Planta.codigo.asc())
+        ).scalars()
+    )
+    cruces_progenitor = list(
+        session.execute(
+            select(Cruce)
+            .where(or_(Cruce.planta_madre_id == planta_id, Cruce.planta_padre_id == planta_id))
+            .order_by(Cruce.fecha_polinizacion.desc(), Cruce.codigo.desc())
+        ).scalars()
+    )
+
+    return {
+        "madre": madre,
+        "padre": padre,
+        "cruce_origen": cruce_origen,
+        "clone_de": clone_de,
+        "hijos": hijos,
+        "hermanos": hermanos,
+        "clones": clones,
+        "cruces_progenitor": cruces_progenitor,
+    }
+
+
+def _genealogy_network(session: Session) -> tuple[list[dict], list[dict], dict[str, set[str]]]:
+    plantas = list(session.execute(select(Planta).order_by(Planta.codigo.asc())).scalars())
+    cruces = list(session.execute(select(Cruce).order_by(Cruce.codigo.asc())).scalars())
+    planta_ids = {planta.id for planta in plantas}
+    cruce_ids = {cruce.id for cruce in cruces}
+
+    nodes = [
+        {
+            "id": f"p-{planta.id}",
+            "kind": "planta",
+            "label": planta.codigo,
+            "name": planta.nombre_cultivar or "",
+            "generation": planta.generacion.value if planta.generacion else "",
+            "url": f"/plantas/{planta.id}",
+        }
+        for planta in plantas
+    ]
+    nodes.extend(
+        {
+            "id": f"c-{cruce.id}",
+            "kind": "cruce",
+            "label": cruce.codigo,
+            "name": "Cruce",
+            "generation": "",
+            "url": f"/cruces/{cruce.id}",
+        }
+        for cruce in cruces
+    )
+
+    links: list[dict] = []
+    for planta in plantas:
+        if planta.es_clon_de in planta_ids:
+            links.append({"source": f"p-{planta.es_clon_de}", "target": f"p-{planta.id}", "type": "clon"})
+        elif planta.id_cruce_origen in cruce_ids:
+            links.append({"source": f"c-{planta.id_cruce_origen}", "target": f"p-{planta.id}", "type": "cruce"})
+        else:
+            if planta.id_madre in planta_ids:
+                links.append({"source": f"p-{planta.id_madre}", "target": f"p-{planta.id}", "type": "parentesco"})
+            if planta.id_padre in planta_ids:
+                links.append({"source": f"p-{planta.id_padre}", "target": f"p-{planta.id}", "type": "parentesco"})
+
+    for cruce in cruces:
+        if cruce.planta_madre_id in planta_ids:
+            links.append({"source": f"p-{cruce.planta_madre_id}", "target": f"c-{cruce.id}", "type": "parental"})
+        if cruce.planta_padre_id in planta_ids:
+            links.append({"source": f"p-{cruce.planta_padre_id}", "target": f"c-{cruce.id}", "type": "parental"})
+
+    unique_links = []
+    seen_links = set()
+    for link in links:
+        key = (link["source"], link["target"], link["type"])
+        if key not in seen_links:
+            seen_links.add(key)
+            unique_links.append(link)
+
+    adjacency = {node["id"]: set() for node in nodes}
+    for link in unique_links:
+        adjacency.setdefault(link["source"], set()).add(link["target"])
+    return nodes, unique_links, adjacency
+
+
+def get_genealogy_graph(session: Session, planta_id: int) -> dict:
+    nodes, links, directed = _genealogy_network(session)
+    selected_id = f"p-{planta_id}"
+    if selected_id not in directed:
+        return {"nodes": [], "links": [], "selected": selected_id}
+
+    undirected = {node_id: set(neighbors) for node_id, neighbors in directed.items()}
+    for link in links:
+        undirected.setdefault(link["source"], set()).add(link["target"])
+        undirected.setdefault(link["target"], set()).add(link["source"])
+
+    connected = set()
+    pending = [selected_id]
+    while pending:
+        node_id = pending.pop()
+        if node_id in connected:
+            continue
+        connected.add(node_id)
+        pending.extend(undirected.get(node_id, set()) - connected)
+
+    return {
+        "nodes": [node for node in nodes if node["id"] in connected],
+        "links": [link for link in links if link["source"] in connected and link["target"] in connected],
+        "selected": selected_id,
+    }
+
+
+def genealogy_reachable_plants(session: Session, kind: str, entity_id: int) -> set[int]:
+    _, _, adjacency = _genealogy_network(session)
+    start_id = f"{kind}-{entity_id}"
+    reachable = set()
+    pending = [start_id]
+    while pending:
+        node_id = pending.pop()
+        if node_id in reachable:
+            continue
+        reachable.add(node_id)
+        pending.extend(adjacency.get(node_id, set()) - reachable)
+    return {int(node_id.split("-", 1)[1]) for node_id in reachable if node_id.startswith("p-")}
 
 
 def upsert_fenotipo(session: Session, planta_id: int, data: dict) -> Fenotipo:
@@ -217,6 +379,11 @@ def update_cruce(session: Session, cruce: Cruce, data: dict) -> Cruce:
     for k, v in data.items():
         setattr(cruce, k, v)
     cruce.tasa_germinacion = _calc_tasa(cruce.num_germinadas, cruce.num_semillas_sembradas)
+    descendientes = session.execute(select(Planta).where(Planta.id_cruce_origen == cruce.id)).scalars()
+    for planta in descendientes:
+        planta.id_madre = cruce.planta_madre_id
+        planta.id_padre = cruce.planta_padre_id
+        session.add(planta)
     session.add(cruce)
     session.commit()
     session.refresh(cruce)
